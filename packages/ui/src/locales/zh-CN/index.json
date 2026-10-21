@@ -1280,6 +1280,9 @@
   "external-files.permissions-card.file-count": {
     "defaultMessage": "{count, plural, other {# 文件}}"
   },
+  "external-files.permissions-card.file-database-id": {
+    "defaultMessage": "数据库 ID"
+  },
   "external-files.permissions-card.included-files": {
     "defaultMessage": "所含文件："
   },
@@ -3296,6 +3299,12 @@
   "profile.button.create-project": {
     "defaultMessage": "创建项目"
   },
+  "profile.button.edit-restrictions": {
+    "defaultMessage": "编辑限制"
+  },
+  "profile.button.edit-user": {
+    "defaultMessage": "编辑用户"
+  },
   "profile.button.force-password-reset": {
     "defaultMessage": "强制重置密码"
   },
@@ -3313,6 +3322,9 @@
   },
   "profile.button.reset-2fa": {
     "defaultMessage": "重置双重身份验证"
+  },
+  "profile.button.restrict": {
+    "defaultMessage": "限制用户"
   },
   "profile.button.revoke-sessions": {
     "defaultMessage": "注销所有会话"
@@ -3443,6 +3455,9 @@
   "profile.label.project-count": {
     "defaultMessage": "{count, plural, other {项目}}"
   },
+  "profile.label.restricted": {
+    "defaultMessage": "已限制"
+  },
   "profile.official-account": {
     "defaultMessage": "官方 Modrinth 账户"
   },
@@ -3472,6 +3487,54 @@
   },
   "profile.reset-2fa.title": {
     "defaultMessage": "为 {username} 重置双重身份验证"
+  },
+  "profile.restrict-user.admonition-body": {
+    "defaultMessage": "{username} 仍可保持登录，但在限制解除前，任何需要已移除权限的请求都会被拒绝。"
+  },
+  "profile.restrict-user.admonition-title": {
+    "defaultMessage": "将移除所选权限"
+  },
+  "profile.restrict-user.error-description": {
+    "defaultMessage": "更新该用户时出错，请重试。"
+  },
+  "profile.restrict-user.header": {
+    "defaultMessage": "限制 {username}"
+  },
+  "profile.restrict-user.private-reason-label": {
+    "defaultMessage": "内部备注（仅工作人员可见）"
+  },
+  "profile.restrict-user.private-reason-placeholder": {
+    "defaultMessage": "可选"
+  },
+  "profile.restrict-user.reason-label": {
+    "defaultMessage": "原因（向用户展示）"
+  },
+  "profile.restrict-user.reason-placeholder": {
+    "defaultMessage": "可选"
+  },
+  "profile.restrict-user.remove-button": {
+    "defaultMessage": "解除限制"
+  },
+  "profile.restrict-user.remove-error-title": {
+    "defaultMessage": "解除限制失败"
+  },
+  "profile.restrict-user.remove-success-description": {
+    "defaultMessage": "已解除 {username} 的限制。"
+  },
+  "profile.restrict-user.remove-success-title": {
+    "defaultMessage": "限制已解除"
+  },
+  "profile.restrict-user.save-button": {
+    "defaultMessage": "保存限制"
+  },
+  "profile.restrict-user.save-error-title": {
+    "defaultMessage": "保存限制失败"
+  },
+  "profile.restrict-user.save-success-description": {
+    "defaultMessage": "已更新 {username} 的限制。"
+  },
+  "profile.restrict-user.save-success-title": {
+    "defaultMessage": "限制已保存"
   },
   "profile.revoke-sessions.admonition-body": {
     "defaultMessage": "{username} 将在所有设备上退出登录，并需要重新登录。个人访问令牌不受影响。"
@@ -4175,6 +4238,15 @@
   "project.settings.disclosures.title": {
     "defaultMessage": "披露信息"
   },
+  "project.settings.environment.bulk.apply-button": {
+    "defaultMessage": "应用到所有版本"
+  },
+  "project.settings.environment.bulk.description": {
+    "defaultMessage": "这将替换此项目每个版本的运行环境。"
+  },
+  "project.settings.environment.bulk.title": {
+    "defaultMessage": "将环境应用到所有版本"
+  },
   "project.settings.environment.client_and_server.description": {
     "defaultMessage": "在客户端和服务器端均具备部分功能。"
   },
@@ -4201,6 +4273,9 @@
   },
   "project.settings.environment.client_only.title": {
     "defaultMessage": "仅限客户端"
+  },
+  "project.settings.environment.modal.title": {
+    "defaultMessage": "编辑项目环境"
   },
   "project.settings.environment.notice.missing-env.description": {
     "defaultMessage": "你的项目还没有运行环境元数据，请在下方选择符合的选项。"
@@ -7082,6 +7157,63 @@
   "update-all-modal.warning-server": {
     "defaultMessage": "我们无法保证中心对你的服务器是安全的。请重新查看更新日志并考虑备份。"
   },
+  "user-restrictions.group.collections": {
+    "defaultMessage": "收藏"
+  },
+  "user-restrictions.group.create-projects": {
+    "defaultMessage": "创建项目"
+  },
+  "user-restrictions.group.edit-projects": {
+    "defaultMessage": "编辑项目"
+  },
+  "user-restrictions.group.organizations": {
+    "defaultMessage": "组织"
+  },
+  "user-restrictions.group.profile": {
+    "defaultMessage": "个人资料"
+  },
+  "user-restrictions.group.versions": {
+    "defaultMessage": "版本"
+  },
+  "user-restrictions.scope.collection-create": {
+    "defaultMessage": "创建收藏"
+  },
+  "user-restrictions.scope.collection-delete": {
+    "defaultMessage": "删除收藏"
+  },
+  "user-restrictions.scope.collection-write": {
+    "defaultMessage": "编辑收藏"
+  },
+  "user-restrictions.scope.organization-create": {
+    "defaultMessage": "创建组织"
+  },
+  "user-restrictions.scope.organization-delete": {
+    "defaultMessage": "删除组织"
+  },
+  "user-restrictions.scope.organization-write": {
+    "defaultMessage": "编辑组织"
+  },
+  "user-restrictions.scope.project-create": {
+    "defaultMessage": "创建新项目"
+  },
+  "user-restrictions.scope.project-delete": {
+    "defaultMessage": "删除项目"
+  },
+  "user-restrictions.scope.project-write": {
+    "defaultMessage": "编辑项目、管理团队成员并接受邀请"
+  },
+  "user-restrictions.scope.user-write": {
+    "defaultMessage": "编辑个人资料、关注项目并更改偏好设置"
+  },
+  "user-restrictions.scope.version-create": {
+    "defaultMessage": "上传新版本"
+  },
+  "user-restrictions.scope.version-delete": {
+    "defaultMessage": "删除版本及版本文件"
+  },
+  "user-restrictions.scope.version-write": {
+    "defaultMessage": "编辑版本并向版本添加文件"
+  },
   "user.profile.badge.alpha.about.1": {
     "defaultMessage": "该用户自 Modrinth 内测时期便已加入平台，该测试版于 2020 年 11 月收官。"
   },
@@ -7275,4 +7407,3 @@
     "defaultMessage": "类型"
   }
 }
-

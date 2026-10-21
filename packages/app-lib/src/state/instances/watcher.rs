@@ -444,7 +444,9 @@ pub(crate) async fn watch_instance_folder(
     watcher: &FileWatcher,
     dirs: &DirectoryInfo,
 ) {
-    let full_instance_path = dirs.instances_dir().join(instance_path);
+    let stub = dirs.instances_dir().join(instance_path);
+    let full_instance_path = dirs.resolve_instance_dir(instance_path);
+    let external = full_instance_path != stub;
 
     let Ok(metadata) = tokio::fs::metadata(&full_instance_path).await else {
         return;
@@ -467,15 +469,19 @@ pub(crate) async fn watch_instance_folder(
         let exists = meta.is_ok();
         let is_symlink = meta.ok().is_some_and(|m| m.file_type().is_symlink());
 
-        if !exists
-            && !is_symlink
-            && !sub_path.contains(".")
-            && let Err(e) = crate::util::io::create_dir_all(&full_path).await
-        {
-            tracing::error!(
-                "Failed to create directory for watcher {full_path:?}: {e}"
-            );
-            return;
+        if !exists && !is_symlink && !sub_path.contains('.') {
+            if external {
+                continue;
+            }
+            if let Err(e) = crate::util::io::create_dir_all(&full_path).await {
+                tracing::error!(
+                    "Failed to create directory for watcher {full_path:?}: {e}"
+                );
+                return;
+            }
+        }
+        if external && !exists && !is_symlink {
+            continue;
         }
 
         to_watch.push(full_path);

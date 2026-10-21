@@ -131,9 +131,9 @@ const messages = defineMessages({
 					<PrideFundraiserBanner
 						class="p-4 border-0 border-b-[1px] border-[--brand-gradient-border] border-solid"
 					/>
-					<NewsSidebar
-						:style="showAd ? { paddingBottom: `calc(1rem + ${upgradeHeight}px)` } : undefined"
-					/>
+					<div :style="showAd ? { paddingBottom: `calc(1rem + ${upgradeHeight}px)` } : undefined">
+						<NewsSidebar />
+					</div>
 				</div>
 			</div>
 			<div

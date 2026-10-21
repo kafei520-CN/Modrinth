@@ -791,6 +791,14 @@ function deserialize_IMPORT_LAUNCHER_TYPE(d) {
         };
     case 5:
         return {
+            tag: "PCL"
+        };
+    case 6:
+        return {
+            tag: "HMCL"
+        };
+    case 7:
+        return {
             tag: "Unknown"
         };
     default:

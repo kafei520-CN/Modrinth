@@ -874,11 +874,25 @@ async fn run_job_inner(
             if let Some(record) =
                 store::complete_success(job_id, &job_state, &state.pool).await?
             {
-                if let Err(error) =
-                    crate::api::instance::reconcile_instance_synced_options(
+                let instance_dir = state.directories.instances_dir().join(
+                    crate::state::instances::adapters::sqlite::instance_rows::get_instance_by_id(
                         &instance_id,
+                        &state.pool,
                     )
-                    .await
+                    .await?
+                    .map(|instance| instance.path)
+                    .unwrap_or_default(),
+                );
+                if crate::api::pack::import::version_folder::read_external_link(
+                    &instance_dir,
+                )
+                .is_none()
+                    && !crate::util::io::is_directory_link(&instance_dir)
+                    && let Err(error) =
+                        crate::api::instance::reconcile_instance_synced_options(
+                            &instance_id,
+                        )
+                        .await
                 {
                     tracing::warn!(
                         "Failed to reconcile synced options after installing {instance_id}: {error}"

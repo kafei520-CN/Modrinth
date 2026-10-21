@@ -11,6 +11,7 @@ pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
             get_importable_instances,
             is_valid_importable_instance,
             get_default_launcher_path,
+            link_external_instance,
         ])
         .build()
 }
@@ -37,6 +38,21 @@ pub async fn is_valid_importable_instance(
         import::is_valid_importable_instance(instance_folder, launcher_type)
             .await,
     )
+}
+
+/// Points a PCL or HMCL instance at its original game directory.
+#[tauri::command]
+pub async fn link_external_instance(
+    launcher_type: ImportLauncherType,
+    base_path: PathBuf,
+    instance_folder: String,
+) -> Result<String> {
+    Ok(import::link_external_instance(
+        launcher_type,
+        base_path,
+        instance_folder,
+    )
+    .await?)
 }
 
 /// Returns the default path for the given launcher type

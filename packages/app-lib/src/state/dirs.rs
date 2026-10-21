@@ -5,7 +5,7 @@ use crate::state::{Settings, State};
 use crate::util::fetch::IoSemaphore;
 use crate::{ErrorKind, LoadingBarType};
 use anyhow::Context;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tokio::fs;
 
 pub const CACHES_FOLDER_NAME: &str = "caches";
@@ -20,6 +20,16 @@ pub struct DirectoryInfo {
     pub settings_dir: PathBuf, // Base settings directory- app database
     pub config_dir: PathBuf, // Base config directory- instances, minecraft downloads, etc. Changeable as a setting.
     pub app_identifier: String,
+}
+
+/// Game directory recorded by a PCL/HMCL import, when the path still exists.
+pub(crate) fn external_run_directory(stub: &Path) -> Option<PathBuf> {
+    let text =
+        std::fs::read_to_string(stub.join("external-instance.json")).ok()?;
+    let value: serde_json::Value = serde_json::from_str(&text).ok()?;
+    let run_directory = value.get("run_directory")?.as_str()?;
+    let run_directory = PathBuf::from(run_directory);
+    run_directory.is_dir().then_some(run_directory)
 }
 
 impl DirectoryInfo {
@@ -171,6 +181,13 @@ impl DirectoryInfo {
         self.config_dir.join(INSTANCES_FOLDER_NAME)
     }
 
+    /// PCL/HMCL imports keep a stub under profiles and point at the original
+    /// game directory. Everything else uses the stub itself.
+    pub fn resolve_instance_dir(&self, instance_path: &str) -> PathBuf {
+        let stub = self.instances_dir().join(instance_path);
+        external_run_directory(&stub).unwrap_or(stub)
+    }
+
     #[inline]
     pub fn synced_options_dir(&self) -> PathBuf {
         self.config_dir.join(SYNCED_OPTIONS_FOLDER_NAME)
@@ -179,14 +196,13 @@ impl DirectoryInfo {
     /// Gets the logs dir for a given instance path
     #[inline]
     pub fn instance_logs_dir(&self, instance_path: &str) -> PathBuf {
-        self.instances_dir().join(instance_path).join("logs")
+        self.resolve_instance_dir(instance_path).join("logs")
     }
 
     /// Gets the crash reports dir for a given instance path
     #[inline]
     pub fn crash_reports_dir(&self, instance_path: &str) -> PathBuf {
-        self.instances_dir()
-            .join(instance_path)
+        self.resolve_instance_dir(instance_path)
             .join("crash-reports")
     }
 

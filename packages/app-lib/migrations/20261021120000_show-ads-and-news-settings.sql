@@ -1,0 +1,5 @@
+ALTER TABLE settings
+ADD COLUMN show_ads INTEGER NOT NULL DEFAULT TRUE CHECK (show_ads IN (0, 1));
+
+ALTER TABLE settings
+ADD COLUMN show_news INTEGER NOT NULL DEFAULT TRUE CHECK (show_news IN (0, 1));

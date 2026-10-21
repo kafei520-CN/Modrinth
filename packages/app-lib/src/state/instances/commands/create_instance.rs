@@ -26,6 +26,10 @@ pub struct CreateInstance {
     pub icon_path: Option<String>,
     pub icon_config: Option<InstanceIconConfig>,
     pub link: InstanceLink,
+    /// Written to `external-instance.json` before the folder watcher starts.
+    /// The instance is already installed and is not passed through loader metadata.
+    #[serde(default)]
+    pub external_link_json: Option<Vec<u8>>,
 }
 
 pub(crate) async fn create_instance(
@@ -45,7 +49,10 @@ pub(crate) async fn create_instance(
             &io::canonicalize(&full_path)?.display()
         );
 
-        let loader_version = if input.loader != ModLoader::Vanilla {
+        let linked = input.external_link_json.is_some();
+        let loader_version = if linked {
+            input.loader_version
+        } else if input.loader != ModLoader::Vanilla {
             get_loader_version_from_profile(
                 &input.game_version,
                 input.loader,
@@ -71,7 +78,11 @@ pub(crate) async fn create_instance(
             id: instance_id.clone(),
             path: path.clone(),
             applied_content_set_id: Some(content_set_id.clone()),
-            install_stage: InstanceInstallStage::NotInstalled,
+            install_stage: if linked {
+                InstanceInstallStage::Installed
+            } else {
+                InstanceInstallStage::NotInstalled
+            },
             launcher_feature_version: LauncherFeatureVersion::MOST_RECENT,
             update_channel: ReleaseChannel::Release,
             name: input.name,
@@ -125,6 +136,10 @@ pub(crate) async fn create_instance(
         .await?;
         tx.commit().await?;
 
+        if let Some(bytes) = &input.external_link_json {
+            io::write(full_path.join("external-instance.json"), bytes).await?;
+        }
+
         crate::state::instances::watcher::watch_instance_folder(
             &instance.id,
             &instance.path,
@@ -132,6 +147,9 @@ pub(crate) async fn create_instance(
             &state.directories,
         )
         .await;
+        if linked {
+            return Ok(instance);
+        }
         if let Err(error) =
             crate::api::instance::reconcile_instance_synced_options(
                 &instance.id,

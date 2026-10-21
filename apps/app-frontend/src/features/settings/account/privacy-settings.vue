@@ -10,6 +10,7 @@ import {
 } from '@modrinth/ui'
 import { ref, watch } from 'vue'
 
+import { useAppSettings } from '@/composables/use-app-settings.ts'
 import { open_ads_consent_preferences } from '@/helpers/ads.js'
 import { optInAnalytics, optOutAnalytics } from '@/helpers/analytics'
 import { get, set } from '@/helpers/settings.ts'
@@ -17,6 +18,7 @@ import { get, set } from '@/helpers/settings.ts'
 const { formatMessage } = useVIntl()
 const { handleError } = injectNotificationManager()
 const { adConsentAvailable } = injectPageContext()
+const appSettings = useAppSettings()
 const settings = ref(await get())
 
 const messages = defineMessages({
@@ -51,6 +53,23 @@ const messages = defineMessages({
 		defaultMessage:
 			'Show Modrinth App as your current activity on Discord. This does not affect Rich Presence added to instances by mods. Requires an app restart.',
 	},
+	newsTitle: {
+		id: 'app.settings.privacy.news.title',
+		defaultMessage: 'News',
+	},
+	newsDescription: {
+		id: 'app.settings.privacy.news.description',
+		defaultMessage: 'Show Modrinth news articles in the sidebar.',
+	},
+	adsTitle: {
+		id: 'app.settings.privacy.ads.title',
+		defaultMessage: 'Ads',
+	},
+	adsDescription: {
+		id: 'app.settings.privacy.ads.description',
+		defaultMessage:
+			'Show advertisements, hosting promotions, and the Modrinth+ upgrade prompt in the sidebar.',
+	},
 })
 
 async function manageAdsPreferences() {
@@ -65,6 +84,9 @@ watch(
 		} else {
 			optOutAnalytics()
 		}
+
+		appSettings.showAds = settings.value.show_ads
+		appSettings.showNews = settings.value.show_news
 
 		await set(settings.value)
 	},
@@ -110,5 +132,29 @@ watch(
 			</p>
 		</div>
 		<Toggle id="disable-discord-rpc" v-model="settings.discord_rpc" />
+	</div>
+
+	<div class="mt-4 flex items-center justify-between gap-4">
+		<div>
+			<h2 class="m-0 text-lg font-semibold text-contrast">
+				{{ formatMessage(messages.newsTitle) }}
+			</h2>
+			<p class="m-0 mt-1">
+				{{ formatMessage(messages.newsDescription) }}
+			</p>
+		</div>
+		<Toggle id="show-news" v-model="settings.show_news" />
+	</div>
+
+	<div class="mt-4 flex items-center justify-between gap-4">
+		<div>
+			<h2 class="m-0 text-lg font-semibold text-contrast">
+				{{ formatMessage(messages.adsTitle) }}
+			</h2>
+			<p class="m-0 mt-1">
+				{{ formatMessage(messages.adsDescription) }}
+			</p>
+		</div>
+		<Toggle id="show-ads" v-model="settings.show_ads" />
 	</div>
 </template>

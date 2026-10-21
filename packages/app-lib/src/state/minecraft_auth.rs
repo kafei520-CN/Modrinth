@@ -268,6 +268,193 @@ pub async fn login_finish(
     Ok(credentials)
 }
 
+/// HMCL offline account: UUID is `UUID.nameUUIDFromBytes("OfflinePlayer:" + name)`.
+pub async fn login_offline(
+    username: &str,
+    exec: impl sqlx::Executor<'_, Database = sqlx::Sqlite> + Copy,
+) -> crate::Result<Credentials> {
+    let username = username.trim();
+    if username.is_empty() || username.chars().count() > 16 {
+        anyhow::bail!(ErrorKind::InputError(
+            "offline username must be 1-16 characters".to_string(),
+        ));
+    }
+
+    let credentials = Credentials {
+        offline_profile: MinecraftProfile {
+            id: offline_player_uuid(username),
+            name: username.to_string(),
+            ..MinecraftProfile::default()
+        },
+        access_token: "0".to_string(),
+        refresh_token: "offline".to_string(),
+        expires: Utc::now() + Duration::days(3650),
+        active: true,
+    };
+    credentials.upsert(exec).await?;
+    Ok(credentials)
+}
+
+/// HMCL Authlib Injector / Yggdrasil third-party login.
+pub async fn login_yggdrasil(
+    server: &str,
+    username: &str,
+    password: &str,
+    exec: impl sqlx::Executor<'_, Database = sqlx::Sqlite> + Copy,
+) -> crate::Result<Credentials> {
+    let server = normalize_yggdrasil_root(server)?;
+    let username = username.trim();
+    if username.is_empty() || password.is_empty() {
+        anyhow::bail!(ErrorKind::InputError(
+            "username and password are required".to_string(),
+        ));
+    }
+
+    let client_token = Uuid::new_v4().as_simple().to_string();
+    let response = INSECURE_REQWEST_CLIENT
+        .post(format!("{server}/authserver/authenticate"))
+        .json(&json!({
+            "username": username,
+            "password": password,
+            "requestUser": false,
+            "agent": { "name": "Minecraft", "version": 1 },
+            "clientToken": client_token,
+        }))
+        .send()
+        .await
+        .map_err(|err| {
+            ErrorKind::InputError(format!("auth server request failed: {err}"))
+        })?;
+    let status = response.status();
+    let body = response.text().await.map_err(|err| {
+        ErrorKind::InputError(format!("auth server response failed: {err}"))
+    })?;
+    if !status.is_success() {
+        anyhow::bail!(ErrorKind::InputError(format!(
+            "auth server rejected login ({status}): {body}"
+        )));
+    }
+    let parsed: YggdrasilAuthResponse = serde_json::from_str(&body).map_err(|err| {
+        ErrorKind::InputError(format!("invalid auth server response: {err}"))
+    })?;
+    let profile = parsed
+        .selected_profile
+        .or_else(|| parsed.available_profiles.and_then(|profiles| profiles.into_iter().next()))
+        .ok_or(ErrorKind::InputError(
+            "auth server did not return a profile".to_string(),
+        ))?;
+    let id = Uuid::parse_str(&profile.id).map_err(|_| {
+        ErrorKind::InputError(format!("invalid profile id {}", profile.id))
+    })?;
+    let client_token = parsed.client_token.unwrap_or(client_token);
+
+    let _ = cache_authlib_injector().await;
+
+    let credentials = Credentials {
+        offline_profile: MinecraftProfile {
+            id,
+            name: profile.name,
+            ..MinecraftProfile::default()
+        },
+        access_token: parsed.access_token,
+        refresh_token: format!("yggdrasil\n{server}\n{client_token}"),
+        expires: Utc::now() + Duration::days(3650),
+        active: true,
+    };
+    credentials.upsert(exec).await?;
+    Ok(credentials)
+}
+
+fn offline_player_uuid(name: &str) -> Uuid {
+    let digest = md5::compute(format!("OfflinePlayer:{name}").as_bytes());
+    let mut bytes = digest.0;
+    bytes[6] = (bytes[6] & 0x0f) | 0x30;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    Uuid::from_bytes(bytes)
+}
+
+fn normalize_yggdrasil_root(server: &str) -> crate::Result<String> {
+    let server = server.trim().trim_end_matches('/');
+    if server.is_empty() {
+        anyhow::bail!(ErrorKind::InputError(
+            "auth server URL is required".to_string(),
+        ));
+    }
+    let server = if server.starts_with("http://") || server.starts_with("https://") {
+        server.to_string()
+    } else {
+        format!("https://{server}")
+    };
+    let server = server
+        .trim_end_matches("/authserver/authenticate")
+        .trim_end_matches('/');
+    Ok(server.to_string())
+}
+
+#[derive(Deserialize)]
+struct YggdrasilAuthResponse {
+    #[serde(rename = "accessToken")]
+    access_token: String,
+    #[serde(rename = "clientToken")]
+    client_token: Option<String>,
+    #[serde(rename = "selectedProfile")]
+    selected_profile: Option<YggdrasilProfile>,
+    #[serde(rename = "availableProfiles")]
+    available_profiles: Option<Vec<YggdrasilProfile>>,
+}
+
+#[derive(Deserialize)]
+struct YggdrasilProfile {
+    id: String,
+    name: String,
+}
+
+async fn cache_authlib_injector() -> crate::Result<std::path::PathBuf> {
+    let state = crate::State::get().await?;
+    let path = state
+        .directories
+        .caches_dir()
+        .join("authlib-injector.jar");
+    if path.is_file() {
+        return Ok(path);
+    }
+    crate::util::io::create_dir_all(path.parent().unwrap_or(&path)).await?;
+    let meta: serde_json::Value = INSECURE_REQWEST_CLIENT
+        .get("https://authlib-injector.yushi.moe/artifact/latest.json")
+        .send()
+        .await?
+        .error_for_status()?
+        .json()
+        .await?;
+    let url = meta
+        .get("download_url")
+        .and_then(|value| value.as_str())
+        .ok_or(ErrorKind::InputError(
+            "authlib-injector metadata has no download url".to_string(),
+        ))?;
+    let bytes = INSECURE_REQWEST_CLIENT
+        .get(url)
+        .send()
+        .await?
+        .error_for_status()?
+        .bytes()
+        .await?;
+    crate::util::io::write(&path, bytes).await?;
+    Ok(path)
+}
+
+pub fn yggdrasil_launch_agent(
+    refresh_token: &str,
+    jar: &std::path::Path,
+) -> Option<String> {
+    let mut lines = refresh_token.lines();
+    if lines.next() != Some("yggdrasil") {
+        return None;
+    }
+    let server = lines.next()?;
+    Some(format!("-javaagent:{}={server}", jar.display()))
+}
+
 #[derive(Deserialize, Debug)]
 pub struct Credentials {
     /// The offline profile of the user these credentials are for.
@@ -345,7 +532,9 @@ impl Credentials {
         // Use a margin of 5 minutes to give e.g. Minecraft and potentially
         // other operations that depend on a fresh token 5 minutes to complete
         // from now, and deal with some classes of clock skew
-        if self.expires > Utc::now() + Duration::minutes(5) {
+        if self.is_local_account()
+            || self.expires > Utc::now() + Duration::minutes(5)
+        {
             return Ok(());
         }
 
@@ -418,10 +607,18 @@ impl Credentials {
         .await
     }
 
+    fn is_local_account(&self) -> bool {
+        self.refresh_token == "offline"
+            || self.refresh_token.starts_with("yggdrasil\n")
+    }
+
     async fn online_profile_with_cache_intent(
         &self,
         cache_intent: OnlineProfileCacheIntent,
     ) -> Option<Arc<MinecraftProfile>> {
+        if self.is_local_account() {
+            return None;
+        }
         let max_age = cache_intent.max_age();
         let stale_profile = {
             let mut profile_cache = PROFILE_CACHE.lock().await;

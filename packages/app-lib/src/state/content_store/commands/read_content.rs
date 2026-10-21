@@ -220,9 +220,21 @@ impl ContentStore {
         if !relative_path.is_empty() {
             validate_relative(relative_path)?;
         }
-        let base = self.profiles.join(instance_path);
-        let destination = base.join(relative_path);
-        validate_parent_directories(&self.profiles, &destination).await?;
+        let stub = self.profiles.join(instance_path);
+        let external = crate::state::dirs::external_run_directory(&stub);
+        let base = external.clone().unwrap_or_else(|| stub.clone());
+        let destination = if relative_path.is_empty() {
+            base.clone()
+        } else {
+            base.join(relative_path)
+        };
+        if external.is_some() {
+            if !relative_path.is_empty() {
+                validate_parent_directories(&base, &destination).await?;
+            }
+        } else {
+            validate_parent_directories(&self.profiles, &destination).await?;
+        }
         Ok(destination)
     }
 

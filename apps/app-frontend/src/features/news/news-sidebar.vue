@@ -2,11 +2,15 @@
 import { NewspaperIcon } from '@modrinth/assets'
 import { ButtonLink, defineMessages, NewsArticleCard, useVIntl } from '@modrinth/ui'
 import { useQuery } from '@tanstack/vue-query'
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
+
+import { useAppSettings } from '@/composables/use-app-settings.ts'
 
 import { newsArticlesQueryOptions } from './queries'
 
 const { formatMessage } = useVIntl()
+const appSettings = useAppSettings()
+const showNews = computed(() => appSettings.showNews)
 const messages = defineMessages({
 	news: {
 		id: 'app.news.title',
@@ -20,6 +24,7 @@ const messages = defineMessages({
 
 const { data: news, error } = useQuery({
 	...newsArticlesQueryOptions(),
+	enabled: showNews,
 	select: (articles) => articles.slice(0, 4),
 })
 
@@ -29,7 +34,7 @@ watch(error, (error) => {
 </script>
 
 <template>
-	<div v-if="news && news.length > 0" class="p-4 flex flex-col items-center">
+	<div v-if="showNews && news && news.length > 0" class="p-4 flex flex-col items-center">
 		<h3 class="text-base mb-4 text-primary font-medium m-0 text-left w-full">
 			{{ formatMessage(messages.news) }}
 		</h3>

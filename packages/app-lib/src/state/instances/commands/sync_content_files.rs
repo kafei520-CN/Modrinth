@@ -33,6 +33,15 @@ pub(crate) async fn sync_instance_content_files(
     instance: &Instance,
     state: &State,
 ) -> crate::Result<Vec<InstanceFile>> {
+    let instance_dir = state.directories.instances_dir().join(&instance.path);
+    if crate::util::io::is_directory_link(&instance_dir) {
+        return sqlite::content_rows::get_instance_files(
+            &instance.id,
+            &state.pool,
+        )
+        .await;
+    }
+
     let (snapshot, known_files, known_bindings) = {
         let instance_content =
             InstanceContent::lock(&instance.id, state).await?;

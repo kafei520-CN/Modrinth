@@ -19,7 +19,13 @@ pub(crate) fn scan_content_files(
 ) -> crate::Result<Vec<ScannedContentFile>> {
     crate::state::content_store::validate_instance_path(instance_path)?;
     let instance_full_path = instances_dir.join(instance_path);
-    let instance_dir = io::canonicalize(instance_full_path)?;
+    let instance_dir = if let Some(run) =
+        crate::state::dirs::external_run_directory(&instance_full_path)
+    {
+        io::canonicalize(run)?
+    } else {
+        io::canonicalize(&instance_full_path)?
+    };
     let linked_instance =
         instance_dir != io::canonicalize(instances_dir)?.join(instance_path);
     let mut files = Vec::new();

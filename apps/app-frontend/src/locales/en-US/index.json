@@ -701,6 +701,18 @@
   "app.instance.confirm-delete.instances-label": {
     "message": "{count, plural, one {Instance} other {Instances ({count})}}"
   },
+  "app.instance.confirm-release.admonition-body": {
+    "message": "This only removes the instance from the library. Worlds, mods, and configs stay in the original folder."
+  },
+  "app.instance.confirm-release.admonition-header": {
+    "message": "Game files are kept"
+  },
+  "app.instance.confirm-release.button": {
+    "message": "Release instance"
+  },
+  "app.instance.confirm-release.header": {
+    "message": "Release instance"
+  },
   "app.instance.content.managed-content.modpack-header": {
     "message": "Modpack content"
   },
@@ -1162,6 +1174,9 @@
   },
   "app.library.instance.action.remove-from-favorites": {
     "message": "Remove from favorites"
+  },
+  "app.library.instance.action.release": {
+    "message": "Release instance"
   },
   "app.library.instance.action.remove-from-group": {
     "message": "Remove from group"
@@ -2756,11 +2771,23 @@
   "app.settings.privacy.ads-consent.intro": {
     "message": "Ads make Modrinth possible and fund creator payouts. Our partners may store or access cookies in the app to personalize ads and measure performance. You can opt out or manage your preferences below."
   },
+  "app.settings.privacy.ads.description": {
+    "message": "Show advertisements, hosting promotions, and the Modrinth+ upgrade prompt in the sidebar."
+  },
+  "app.settings.privacy.ads.title": {
+    "message": "Ads"
+  },
   "app.settings.privacy.discord-rich-presence.description": {
     "message": "Show Modrinth App as your current activity on Discord. This does not affect Rich Presence added to instances by mods. Requires an app restart."
   },
   "app.settings.privacy.discord-rich-presence.title": {
     "message": "Discord Rich Presence"
+  },
+  "app.settings.privacy.news.description": {
+    "message": "Show Modrinth news articles in the sidebar."
+  },
+  "app.settings.privacy.news.title": {
+    "message": "News"
   },
   "app.settings.privacy.telemetry.description": {
     "message": "Modrinth collects anonymized analytics and usage data to improve our user experience and customize your experience. By disabling this option, you opt out and your data will no longer be collected."

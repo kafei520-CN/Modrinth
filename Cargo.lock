@@ -12469,6 +12469,7 @@ dependencies = [
  "indicatif",
  "itertools 0.14.0",
  "json5",
+ "md5",
  "modrinth-content-management",
  "notify",
  "notify-debouncer-mini",

@@ -15,6 +15,8 @@ import { install_import_instance } from './install'
   - ATLauncher
   - Curseforge
   - PrismLauncher
+  - PCL
+  - HMCL
   - Unknown (shouldn't be used, but is used internally if the launcher type isn't recognized)
 
   For each launcher type, we can get a guess of the default path for the launcher, and a list of importable instances
@@ -32,7 +34,21 @@ export async function get_importable_instances(launcherType, basePath) {
 }
 
 /// Import an instance from a launcher type and base path
+const COPY_LAUNCHERS = ['MultiMC', 'PrismLauncher', 'ATLauncher', 'GDLauncher', 'Curseforge']
+
 export async function import_instance(launcherType, basePath, instanceFolder) {
+	if (!COPY_LAUNCHERS.includes(launcherType)) {
+		const instanceId = await invoke('plugin:import|link_external_instance', {
+			launcherType,
+			basePath,
+			instanceFolder,
+		})
+		return {
+			instance_id: instanceId,
+			target: { instance_id: instanceId },
+			status: 'succeeded',
+		}
+	}
 	return await install_import_instance(launcherType, basePath, instanceFolder)
 }
 

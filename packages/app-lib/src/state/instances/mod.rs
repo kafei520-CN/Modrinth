@@ -17,7 +17,7 @@ pub(crate) use self::commands::{
 };
 pub(crate) use self::commands::{
     create_instance, edit_instance, get_instance, get_instances_metadata,
-    list_instances, refresh_all_instances, remove_instance,
+    list_instances, refresh_all_instances, release_instance, remove_instance,
 };
 pub(crate) use self::commands::{
     dependencies_to_content_items, get_content_projects,

@@ -33,6 +33,14 @@ export async function login() {
 	return await invoke('plugin:auth|login')
 }
 
+export async function login_offline(username) {
+	return await invoke('plugin:auth|login_offline', { username })
+}
+
+export async function login_yggdrasil(server, username, password) {
+	return await invoke('plugin:auth|login_yggdrasil', { server, username, password })
+}
+
 /**
  * Retrieves the default user
  * @return {Promise<UUID | undefined>}

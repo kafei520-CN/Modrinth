@@ -14,6 +14,8 @@ fn main() {
                     .commands(&[
                         "check_reachable",
                         "login",
+                        "login_offline",
+                        "login_yggdrasil",
                         "remove_user",
                         "get_default_user",
                         "set_default_user",
@@ -57,6 +59,7 @@ fn main() {
                         "get_importable_instances",
                         "is_valid_importable_instance",
                         "get_default_launcher_path",
+                        "link_external_instance",
                     ])
                     .default_permission(
                         DefaultPermissionRule::AllowAllCommands,
@@ -208,6 +211,7 @@ fn main() {
                 InlinedPlugin::new()
                     .commands(&[
                         "instance_remove",
+                        "instance_release",
                         "instance_get",
                         "instance_get_many",
                         "instance_get_projects",

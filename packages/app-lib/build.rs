@@ -5,6 +5,7 @@ use std::{env, fs};
 
 fn main() {
     println!("cargo::rerun-if-changed=.env");
+    println!("cargo::rerun-if-changed=.env.prod");
     println!("cargo::rerun-if-changed=java/gradle");
     println!("cargo::rerun-if-changed=java/src");
     println!("cargo::rerun-if-changed=java/build.gradle.kts");
@@ -16,9 +17,33 @@ fn main() {
 }
 
 fn set_env() {
-    for (var_name, var_value) in
-        dotenvy::dotenv_iter().into_iter().flatten().flatten()
-    {
+    let manifest_dir =
+        PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    let env_path = [".env", ".env.prod"]
+        .into_iter()
+        .map(|name| manifest_dir.join(name))
+        .find(|path| path.is_file())
+        .unwrap_or_else(|| {
+            println!(
+                "cargo::error=missing {}/.env (copy .env.prod to .env)",
+                manifest_dir.display()
+            );
+            exit(1);
+        });
+
+    let iter = dotenvy::from_path_iter(&env_path).unwrap_or_else(|err| {
+        println!("cargo::error=failed to read {}: {err}", env_path.display());
+        exit(1);
+    });
+
+    for item in iter {
+        let (var_name, var_value) = item.unwrap_or_else(|err| {
+            println!(
+                "cargo::error=invalid line in {}: {err}",
+                env_path.display()
+            );
+            exit(1);
+        });
         if var_name == "DATABASE_URL" {
             // The sqlx database URL is a build-time detail that should not be exposed to the crate
             continue;

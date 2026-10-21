@@ -11,6 +11,7 @@ import {
 	StarIcon,
 	StopCircleIcon,
 	TrashIcon,
+	UnlinkIcon,
 	UploadIcon,
 } from '@modrinth/assets'
 import {
@@ -40,7 +41,7 @@ import { trackEvent } from '@/helpers/analytics'
 import { get_project_v3_many } from '@/helpers/cache.js'
 import { toError } from '@/helpers/errors'
 import { install_duplicate_instance } from '@/helpers/install'
-import { edit, edit_icon, remove } from '@/helpers/instance'
+import { edit, edit_icon, release, remove } from '@/helpers/instance'
 import {
 	create_group as createInstanceGroup,
 	delete_group as deleteInstanceGroup,
@@ -177,6 +178,10 @@ const instanceActionMessages = defineMessages({
 		defaultMessage: 'Duplicate instance',
 	},
 	delete: { id: 'app.library.instance.action.delete', defaultMessage: 'Delete' },
+	release: {
+		id: 'app.library.instance.action.release',
+		defaultMessage: 'Release instance',
+	},
 	openFolder: { id: 'app.library.instance.action.open-folder', defaultMessage: 'Open folder' },
 	copyPath: { id: 'app.library.instance.action.copy-path', defaultMessage: 'Copy path' },
 	removeFromGroup: {
@@ -232,6 +237,7 @@ function createLibraryState(instances: Ref<GameInstance[]>) {
 		instances.value.filter((instance) => instance.id === currentDeleteInstanceId.value),
 	)
 	const confirmDeleteModal = ref<ConfirmDeleteModal | null>(null)
+	const confirmReleaseModal = ref<ConfirmDeleteModal | null>(null)
 	const iconEditorModal = ref<IconEditorModal | null>(null)
 	const currentIconEditorInstanceId = ref<string | null>(null)
 	const currentIconEditorInstance = computed(
@@ -1181,6 +1187,13 @@ function createLibraryState(instances: Ref<GameInstance[]>) {
 		currentDeleteInstanceId.value = null
 	}
 
+	const releaseInstance = async () => {
+		if (!currentDeleteInstanceId.value) return
+
+		await release(currentDeleteInstanceId.value).catch((error) => handleError(toError(error)))
+		currentDeleteInstanceId.value = null
+	}
+
 	const duplicateInstance = async (instanceId: string) => {
 		await install_duplicate_instance(instanceId).catch((error) => handleError(toError(error)))
 	}
@@ -1365,6 +1378,15 @@ function createLibraryState(instances: Ref<GameInstance[]>) {
 			},
 			{ type: 'divider' },
 			{
+				id: 'release',
+				label: formatMessage(instanceActionMessages.release),
+				icon: UnlinkIcon,
+				action: () => {
+					currentDeleteInstanceId.value = item.instance.id
+					confirmReleaseModal.value?.show()
+				},
+			},
+			{
 				id: 'delete',
 				label: formatMessage(instanceActionMessages.delete),
 				icon: TrashIcon,
@@ -1412,6 +1434,7 @@ function createLibraryState(instances: Ref<GameInstance[]>) {
 		canCreateGroup,
 		instanceOptions,
 		confirmDeleteModal,
+		confirmReleaseModal,
 		iconEditorModal,
 		currentIconEditorInstance,
 		currentDeleteInstances,
@@ -1443,6 +1466,7 @@ function createLibraryState(instances: Ref<GameInstance[]>) {
 		reorderGroups,
 		moveGroup,
 		deleteInstance,
+		releaseInstance,
 		handleInstanceContextMenu,
 		handleInstanceIconSaved,
 	}

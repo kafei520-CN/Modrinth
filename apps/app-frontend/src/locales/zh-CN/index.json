@@ -479,6 +479,15 @@
   "app.features-settings.sync-across-devices.title": {
     "message": "跨设备同步功能"
   },
+  "app.file-download.canceling": {
+    "message": "正在取消下载…"
+  },
+  "app.file-download.preparing": {
+    "message": "正在准备下载…"
+  },
+  "app.file-download.waiting": {
+    "message": "正在等待服务器…"
+  },
   "app.home.jump-back-in.actions.label": {
     "message": "实例操作"
   },
@@ -691,6 +700,18 @@
   },
   "app.instance.confirm-delete.instances-label": {
     "message": "{count, plural, other {实例 ({count})}}"
+  },
+  "app.instance.confirm-release.admonition-body": {
+    "message": "只会从实例库移除这条记录。原目录里的存档、模组和配置不会被删除。"
+  },
+  "app.instance.confirm-release.admonition-header": {
+    "message": "游戏文件会保留"
+  },
+  "app.instance.confirm-release.button": {
+    "message": "释放实例"
+  },
+  "app.instance.confirm-release.header": {
+    "message": "释放实例"
   },
   "app.instance.content.managed-content.modpack-header": {
     "message": "整合包内容"
@@ -1154,6 +1175,9 @@
   "app.library.instance.action.remove-from-favorites": {
     "message": "取消收藏"
   },
+  "app.library.instance.action.release": {
+    "message": "释放实例"
+  },
   "app.library.instance.action.remove-from-group": {
     "message": "移出分组"
   },
@@ -1321,6 +1345,12 @@
   },
   "app.modal.install-to-play.shared-instance-unknown-files-description": {
     "message": "这实例里面有东西没有在modrinth。我们真的建议只安装你信任的文件源。"
+  },
+  "app.modal.install-to-play.unavailable-description": {
+    "message": "该服务器所用整合包版本目前无法下载。它可能已下架或正在审核中。请稍后再试，或联系服务器所有者。"
+  },
+  "app.modal.install-to-play.unavailable-header": {
+    "message": "该服务器的整合包不可用"
   },
   "app.modal.install-to-play.unknown-files-description": {
     "message": "这个整合包包含一些未在 Modrinth 发布的文件。我们强烈建议只从你信任的来源安装文件。"
@@ -2741,11 +2771,23 @@
   "app.settings.privacy.ads-consent.intro": {
     "message": "广告使 Modrinth 得以运营，并为创作者报酬提供资金支持。我们的合作伙伴可能会在应用中存储或访问 Cookie，以便实现广告个性化和效果衡量。您可以在下方选择退出或管理您的偏好设置。"
   },
+  "app.settings.privacy.ads.description": {
+    "message": "在侧边栏显示广告、托管推广以及升级至 Modrinth+ 的提示。"
+  },
+  "app.settings.privacy.ads.title": {
+    "message": "广告"
+  },
   "app.settings.privacy.discord-rich-presence.description": {
     "message": "在 Discord 上将 Modrinth App 显示为您当前的活动。这不会影响模组为游戏实例添加的 Rich Presence。需要重启应用生效。"
   },
   "app.settings.privacy.discord-rich-presence.title": {
     "message": "Discord Rich Presence"
+  },
+  "app.settings.privacy.news.description": {
+    "message": "在侧边栏显示 Modrinth 新闻文章。"
+  },
+  "app.settings.privacy.news.title": {
+    "message": "新闻"
   },
   "app.settings.privacy.telemetry.description": {
     "message": "Modrinth 收集匿名分析和使用数据，以提升用户体验并为您提供个性化服务。若禁用此选项，即表示您选择退出，您的数据将不再被收集。"
@@ -2878,6 +2920,12 @@
   },
   "app.settings.resource-management.store.verified": {
     "message": "验证完成"
+  },
+  "app.settings.sidebar.label.instance-defaults": {
+    "message": "实例默认值"
+  },
+  "app.settings.sidebar.label.system": {
+    "message": "系统"
   },
   "app.settings.synced-options.choose-sync-source.command-history-description": {
     "message": "选择要从哪个实例复制你的命令历史记录。 此历史仅用于初始同步，您可以在其后从任何实例编辑它。"
@@ -3110,14 +3158,56 @@
   "app.settings.tabs.features": {
     "message": "功能"
   },
+  "app.settings.tabs.java-and-memory": {
+    "message": "Java 与内存"
+  },
   "app.settings.tabs.java-installations": {
     "message": "Java 管理"
   },
   "app.settings.tabs.language": {
     "message": "语言"
   },
+  "app.settings.tabs.launch-hooks": {
+    "message": "启动钩子"
+  },
   "app.settings.tabs.privacy": {
     "message": "隐私"
+  },
+  "app.settings.tabs.resources": {
+    "message": "资源"
+  },
+  "app.settings.tabs.syncing": {
+    "message": "同步"
+  },
+  "app.settings.tabs.troubleshooting": {
+    "message": "故障排除"
+  },
+  "app.settings.tabs.window": {
+    "message": "窗口"
+  },
+  "app.settings.troubleshooting.clear-cache": {
+    "message": "清除缓存"
+  },
+  "app.settings.troubleshooting.clear-cache.confirm.title": {
+    "message": "要清除应用缓存吗？"
+  },
+  "app.settings.troubleshooting.report-ad.copied": {
+    "message": "已复制"
+  },
+  "app.settings.troubleshooting.report-ad.copy": {
+    "message": "复制广告详情"
+  },
+  "app.settings.troubleshooting.report-ad.description": {
+    "message": "看到不当或冒犯性广告？请在广告显示时复制其详情，并发送给 <support>Modrinth 支持</support>。我们会审核并予以移除。"
+  },
+  "app.settings.troubleshooting.report-ad.no-ad.text": {
+    "message": "请等待广告加载完成后再试。"
+  },
+  "app.settings.troubleshooting.report-ad.no-ad.title": {
+    "message": "未找到广告"
+  },
+  "app.settings.troubleshooting.report-ad.title": {
+    "message": "举报广告"
   },
   "app.sidebar.playing-as": {
     "message": "游玩账户"
@@ -3402,7 +3492,7 @@
     "message": "未同步的选定内容只会从此实例中删除。"
   },
   "app.synced-content.delete.override-description": {
-    "message": "您可以从这个实例或所有同步实例中删除它。 从这个实例中删除它将启用重写，此实例将不再收到这些内容类型的同步更改。"
+    "message": "您可以从这个实例或所有同步实例中删除它。 从这个实例中删除它将启用重写，此实例将不�����收到这些内容类型的同步更改。"
   },
   "app.synced-content.delete.resource-pack-description": {
     "message": "你可以从这个实例或所有同步实例中删除 {count, plural, other {它们}} 正在删除 {count, plural, other {他们}} 只有此实例将启用重写，此实例将不再收到同步材质包更改。"
@@ -3959,6 +4049,9 @@
   "instance.server-modal.resource-pack": {
     "message": "资源包"
   },
+  "instance.settings.defaults.open-app-settings": {
+    "message": "管理默认设置"
+  },
   "instance.settings.sharing.active-invites.actions": {
     "message": "操作"
   },
@@ -3997,6 +4090,12 @@
   },
   "instance.settings.sharing.revoke-invite.header": {
     "message": "撤销邀请"
+  },
+  "instance.settings.sidebar.label.game": {
+    "message": "游戏"
+  },
+  "instance.settings.sidebar.label.instance": {
+    "message": "实例"
   },
   "instance.settings.synced-options.data-override": {
     "message": "关闭此覆盖以编辑同步数据。"
@@ -4115,6 +4214,12 @@
   "instance.settings.tabs.general.update-channel.select": {
     "message": "选择更新渠道"
   },
+  "instance.settings.tabs.hooks.default-settings-description": {
+    "message": "除非你在此覆盖，否则实例将使用默认启动钩子。"
+  },
+  "instance.settings.tabs.hooks.label": {
+    "message": "启动钩子"
+  },
   "instance.settings.tabs.hooks.post-exit": {
     "message": "退出后执行"
   },
@@ -4175,6 +4280,9 @@
   "instance.settings.tabs.installation.locked": {
     "message": "当实例被锁定时，安装设置不可用。"
   },
+  "instance.settings.tabs.java.default-settings-description": {
+    "message": "除非你在此覆盖，否则实例将使用默认的 Java 与内存设置。"
+  },
   "instance.settings.tabs.java.enter-environment-variables": {
     "message": "输入环境变量……"
   },
@@ -4198,6 +4306,9 @@
   },
   "instance.settings.tabs.java.java-path-placeholder": {
     "message": "/path/to/java"
+  },
+  "instance.settings.tabs.java.label": {
+    "message": "Java 与内存"
   },
   "instance.settings.tabs.sharing": {
     "message": "共享"
@@ -4259,8 +4370,14 @@
   "instance.settings.tabs.synced-options.shared-settings.description": {
     "message": "启用覆盖设置，使同步的设置在此实例中保持独立。"
   },
+  "instance.settings.tabs.syncing": {
+    "message": "同步"
+  },
   "instance.settings.tabs.window": {
     "message": "自定义窗口设置"
+  },
+  "instance.settings.tabs.window.default-settings-description": {
+    "message": "除非你在此覆盖，否则实例将使用默认窗口设置。"
   },
   "instance.settings.tabs.window.fullscreen": {
     "message": "全屏"
@@ -4276,6 +4393,9 @@
   },
   "instance.settings.tabs.window.height.enter": {
     "message": "输入高度……"
+  },
+  "instance.settings.tabs.window.label": {
+    "message": "窗口"
   },
   "instance.settings.tabs.window.width": {
     "message": "宽度"
@@ -4427,11 +4547,59 @@
   "minecraft-account.add-account": {
     "message": "添加账户"
   },
+  "minecraft-account.add-account.hint": {
+    "message": "选择登录方式。"
+  },
+  "minecraft-account.add-account.title": {
+    "message": "添加账户"
+  },
+  "minecraft-account.auth-server": {
+    "message": "认证服务器"
+  },
+  "minecraft-account.back": {
+    "message": "返回"
+  },
+  "minecraft-account.cancel": {
+    "message": "取消"
+  },
+  "minecraft-account.continue": {
+    "message": "登录"
+  },
+  "minecraft-account.next": {
+    "message": "下一步"
+  },
   "minecraft-account.label": {
     "message": "Minecraft 账户"
   },
+  "minecraft-account.method.authlib.description": {
+    "message": "登录 Yggdrasil 认证服，例如 LittleSkin。"
+  },
+  "minecraft-account.method.authlib.title": {
+    "message": "第三方认证登录"
+  },
+  "minecraft-account.method.microsoft.description": {
+    "message": "使用拥有 Minecraft 的 Microsoft 账户登录。"
+  },
+  "minecraft-account.method.microsoft.title": {
+    "message": "微软登录"
+  },
+  "minecraft-account.method.offline.description": {
+    "message": "只用一个名字进入游戏，不需要微软账户。"
+  },
+  "minecraft-account.method.offline.title": {
+    "message": "离线登录"
+  },
   "minecraft-account.not-signed-in": {
     "message": "未登录"
+  },
+  "minecraft-account.password": {
+    "message": "密码"
+  },
+  "minecraft-account.player-name": {
+    "message": "玩家名"
+  },
+  "minecraft-account.player-name.placeholder": {
+    "message": "Steve"
   },
   "minecraft-account.remove-account": {
     "message": "移除账户"
@@ -4441,6 +4609,9 @@
   },
   "minecraft-account.sign-in": {
     "message": "登录 Minecraft"
+  },
+  "minecraft-account.username": {
+    "message": "用户名"
   },
   "minecraft-required.description": {
     "message": "你需要先登录拥有 Minecraft 的 Microsoft 账户，然后才能启动游戏。"

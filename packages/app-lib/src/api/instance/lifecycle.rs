@@ -27,6 +27,29 @@ pub(crate) fn create(
         icon_path,
         icon_config,
         link,
+        None,
+    ))
+}
+
+/// Registers an instance that already exists on disk.
+/// `link_json` is `external-instance.json` and is written before the folder watcher starts.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn create_linked(
+    name: String,
+    game_version: String,
+    modloader: ModLoader,
+    loader_version: Option<String>,
+    link_json: Vec<u8>,
+) -> impl Future<Output = crate::Result<InstanceMetadata>> + Send + 'static {
+    Box::pin(create_inner(
+        name,
+        game_version,
+        modloader,
+        loader_version,
+        None,
+        None,
+        InstanceLink::Unmanaged,
+        Some(link_json),
     ))
 }
 
@@ -40,6 +63,7 @@ async fn create_inner(
     icon_path: Option<String>,
     icon_config: Option<InstanceIconConfig>,
     link: InstanceLink,
+    external_link_json: Option<Vec<u8>>,
 ) -> crate::Result<InstanceMetadata> {
     let state = State::get().await?;
     if let Some(icon_config) = &icon_config {
@@ -55,6 +79,7 @@ async fn create_inner(
             icon_path,
             icon_config,
             link,
+            external_link_json,
         },
         &state,
     )
@@ -154,6 +179,32 @@ pub async fn remove(instance_id: &str) -> crate::Result<()> {
         .is_some()
     {
         crate::state::remove_instance(instance_id, &state).await?;
+    }
+
+    if let Some(instance) = instance {
+        emit_instance(&instance.id, InstancePayloadType::Removed).await?;
+    }
+
+    Ok(())
+}
+
+#[tracing::instrument]
+pub async fn release(instance_id: &str) -> crate::Result<()> {
+    let state = State::get().await?;
+    let instance =
+        instance_rows::get_instance_display_info(instance_id, &state.pool)
+            .await?;
+    let _install_guards =
+        crate::install::runner::cancel_jobs_for_instance_deletion(
+            instance_id,
+            &state,
+        )
+        .await?;
+    if instance_rows::get_instance_by_id(instance_id, &state.pool)
+        .await?
+        .is_some()
+    {
+        crate::state::release_instance(instance_id, &state).await?;
     }
 
     if let Some(instance) = instance {

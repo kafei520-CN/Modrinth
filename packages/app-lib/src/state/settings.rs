@@ -55,6 +55,10 @@ pub struct Settings {
     pub telemetry: bool,
     pub discord_rpc: bool,
     pub personalized_ads: bool,
+    #[serde(default = "default_true")]
+    pub show_ads: bool,
+    #[serde(default = "default_true")]
+    pub show_news: bool,
 
     pub extra_launch_args: Vec<String>,
     pub custom_env_vars: Vec<(String, String)>,
@@ -137,6 +141,7 @@ impl Settings {
 				friends_online_collapsed,
 				friends_offline_collapsed,
 				friends_pending_collapsed,
+				show_ads, show_news,
                 version
             FROM settings
             "
@@ -170,6 +175,8 @@ impl Settings {
             discord_rpc: res.discord_rpc == 1,
             developer_mode: res.developer_mode == 1,
             personalized_ads: res.personalized_ads == 1,
+            show_ads: res.show_ads == 1,
+            show_news: res.show_news == 1,
             extra_launch_args: res
                 .extra_launch_args
                 .as_ref()
@@ -303,7 +310,9 @@ impl Settings {
 				friends_active_collapsed = $50,
 				friends_online_collapsed = $51,
 				friends_offline_collapsed = $52,
-				friends_pending_collapsed = $53
+				friends_pending_collapsed = $53,
+				show_ads = $54,
+				show_news = $55
             ",
             max_concurrent_writes,
             max_concurrent_downloads,
@@ -358,6 +367,8 @@ impl Settings {
             self.friends_online_collapsed,
             self.friends_offline_collapsed,
             self.friends_pending_collapsed,
+            self.show_ads,
+            self.show_news,
         )
         .execute(exec)
         .await?;

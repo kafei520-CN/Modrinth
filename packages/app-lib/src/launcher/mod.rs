@@ -10,7 +10,7 @@ use crate::instance::QuickPlayType;
 use crate::launcher::download::download_log_config;
 use crate::launcher::io::IOError;
 use crate::launcher::quick_play_version::{
-    QuickPlayServerVersion, QuickPlayVersion,
+    QuickPlayServerVersion, QuickPlaySingleplayerVersion, QuickPlayVersion,
 };
 use crate::server_address::{ServerAddress, parse_server_address};
 use crate::state::server_join_log::JoinLogEntry;
@@ -24,7 +24,9 @@ use crate::{ErrorKind, State, get_resource_file};
 use anyhow::{Context, bail};
 use chrono::Utc;
 use daedalus as d;
-use daedalus::minecraft::{LoggingSide, RuleAction, VersionInfo};
+use daedalus::minecraft::{
+    LoggingConfiguration, LoggingSide, RuleAction, VersionInfo,
+};
 use daedalus::modded::{LoaderVersion, Manifest};
 use serde::Deserialize;
 use sqlx::SqlitePool;
@@ -35,6 +37,53 @@ use tokio::process::Command;
 
 mod args;
 pub(crate) mod hooks;
+
+fn quick_play_for_version(game_version: &str) -> QuickPlayVersion {
+    if uses_modern_arguments(game_version) {
+        QuickPlayVersion {
+            server: QuickPlayServerVersion::Builtin,
+            singleplayer: QuickPlaySingleplayerVersion::Builtin,
+        }
+    } else {
+        QuickPlayVersion {
+            server: QuickPlayServerVersion::BuiltinLegacy,
+            singleplayer: QuickPlaySingleplayerVersion::Unsupported,
+        }
+    }
+}
+
+fn hmcl_natives_dir(minecraft_root: &Path, version_id: &str) -> PathBuf {
+    let os = match std::env::consts::OS {
+        "windows" => "windows",
+        "macos" => "osx",
+        "linux" => "linux",
+        other => other,
+    };
+    let arch = match std::env::consts::ARCH {
+        "x86_64" => "x86_64",
+        "x86" => "x86",
+        "aarch64" => "arm64",
+        "arm" => "arm32",
+        other => other,
+    };
+    minecraft_root
+        .join("versions")
+        .join(version_id)
+        .join(format!("natives-{os}-{arch}"))
+}
+
+fn uses_modern_arguments(game_version: &str) -> bool {
+    let Some(rest) = game_version.strip_prefix("1.") else {
+        return true;
+    };
+    let minor = rest
+        .split(['.', '-'])
+        .next()
+        .unwrap_or("0")
+        .parse::<u32>()
+        .unwrap_or(0);
+    minor >= 13
+}
 
 pub mod download;
 pub mod quick_play_version;
@@ -405,6 +454,21 @@ async fn install_minecraft_inner(
     state: &State,
 ) -> crate::Result<()> {
     let instance = &context.instance;
+    let stub = state.directories.instances_dir().join(&instance.path);
+    if io::is_directory_link(&stub)
+        || state.directories.resolve_instance_dir(&instance.path) != stub
+    {
+        if instance.install_stage != InstanceInstallStage::Installed {
+            crate::state::instances::commands::set_instance_install_stage(
+                &instance.id,
+                InstanceInstallStage::Installed,
+                &state.pool,
+            )
+            .await?;
+            emit_instance(&instance.id, InstancePayloadType::Edited).await?;
+        }
+        return Ok(());
+    }
     let content_set = &context.applied_content_set;
     let phase_details = InstallPhaseDetails::Minecraft {
         game_version: content_set.game_version.clone(),
@@ -921,73 +985,173 @@ pub async fn launch_minecraft(
     let instance_path =
         get_instance_full_path(&instance.path, &state.directories)
             .context("resolving instance path")?;
+    let external_link =
+        crate::api::pack::import::version_folder::read_external_link(
+            &instance_path,
+        );
+    let game_directory = external_link
+        .as_ref()
+        .map(|link| link.run_directory.clone())
+        .unwrap_or_else(|| instance_path.clone());
+    let libraries_dir = external_link
+        .as_ref()
+        .map(|link| link.minecraft_root.join("libraries"))
+        .filter(|path| path.is_dir())
+        .unwrap_or_else(|| state.directories.libraries_dir());
+    let assets_dir = external_link
+        .as_ref()
+        .map(|link| link.minecraft_root.join("assets"))
+        .filter(|path| path.is_dir())
+        .unwrap_or_else(|| state.directories.assets_dir());
+    let local_client = external_link.as_ref().and_then(|link| {
+        let jar = link
+            .minecraft_root
+            .join("versions")
+            .join(&link.version_id)
+            .join(format!("{}.jar", link.version_id));
+        jar.is_file().then_some(jar)
+    });
 
-    let (minecraft, version_index) =
-        resolve_minecraft_manifest(&content_set.game_version, state)
-            .await
-            .context("resolving Minecraft version")?;
-    let version = &minecraft.versions[version_index];
-    let minecraft_updated = version_index
-        <= minecraft
-            .versions
-            .iter()
-            .position(|x| x.id == "22w16a")
-            .unwrap_or(0);
-
-    let loader_version = get_loader_version_from_profile(
-        &content_set.game_version,
-        content_set.loader,
-        content_set.loader_version.as_deref(),
-        &state.directories,
-    )
-    .await
-    .context("resolving loader version")?;
-
-    if content_set.loader != ModLoader::Vanilla && loader_version.is_none() {
-        bail!(ErrorKind::NoLoaderVersion {
-            loader: content_set.loader,
-        });
-    }
-
-    let version_jar =
-        loader_version.as_ref().map_or(version.id.clone(), |it| {
-            format!("{}-{}", version.id.clone(), it.id.clone())
-        });
-
-    let mut version_info = download::download_version_info(
-        state,
-        version,
-        loader_version.as_ref(),
-        None,
-        None,
-        None,
-    )
-    .await
-    .context("loading version info")?;
-    if version_info.logging.is_none() {
-        let requires_logging_info = version_index
+    let (
+        mut version_info,
+        minecraft_updated,
+        version_jar,
+        quick_play_version,
+        launch_version_id,
+        launch_version_type,
+    ) = if let Some(link) = &external_link {
+        let path = link
+            .minecraft_root
+            .join("versions")
+            .join(&link.version_id)
+            .join(format!("{}.json", link.version_id));
+        let text = match std::fs::read_to_string(&path) {
+            Ok(text) => text,
+            Err(err) => bail!(ErrorKind::LauncherError(format!(
+                "could not read {}: {err}",
+                path.display()
+            ))),
+        };
+        let info = match serde_json::from_str::<VersionInfo>(&text) {
+            Ok(info) => info,
+            Err(err) => bail!(ErrorKind::LauncherError(format!(
+                "could not read existing version {}: {err}",
+                path.display()
+            ))),
+        };
+        let launch_version_type = info.type_.clone();
+        let version_id = link.version_id.clone();
+        (
+            info,
+            uses_modern_arguments(&content_set.game_version),
+            version_id.clone(),
+            quick_play_for_version(&content_set.game_version),
+            version_id,
+            launch_version_type,
+        )
+    } else {
+        let (minecraft, version_index) =
+            resolve_minecraft_manifest(&content_set.game_version, state)
+                .await
+                .context("resolving Minecraft version")?;
+        let version = &minecraft.versions[version_index];
+        let minecraft_updated = version_index
             <= minecraft
                 .versions
                 .iter()
-                .position(|x| x.id == "13w39a")
+                .position(|x| x.id == "22w16a")
                 .unwrap_or(0);
-        if requires_logging_info {
-            version_info = download::download_version_info(
-                state,
-                version,
-                loader_version.as_ref(),
-                Some(true),
-                None,
-                None,
-            )
-            .await
-            .context("reloading version info with logging config")?;
-        }
-    }
 
-    let _ = download_log_config(state, &version_info, None, false, None)
+        let loader_version = get_loader_version_from_profile(
+            &content_set.game_version,
+            content_set.loader,
+            content_set.loader_version.as_deref(),
+            &state.directories,
+        )
         .await
-        .context("downloading log config")?;
+        .context("resolving loader version")?;
+
+        if content_set.loader != ModLoader::Vanilla && loader_version.is_none()
+        {
+            bail!(ErrorKind::NoLoaderVersion {
+                loader: content_set.loader,
+            });
+        }
+
+        let version_jar =
+            loader_version.as_ref().map_or(version.id.clone(), |it| {
+                format!("{}-{}", version.id.clone(), it.id.clone())
+            });
+
+        let mut version_info = download::download_version_info(
+            state,
+            version,
+            loader_version.as_ref(),
+            None,
+            None,
+            None,
+        )
+        .await
+        .context("loading version info")?;
+        if version_info.logging.is_none() {
+            let requires_logging_info = version_index
+                <= minecraft
+                    .versions
+                    .iter()
+                    .position(|x| x.id == "13w39a")
+                    .unwrap_or(0);
+            if requires_logging_info {
+                version_info = download::download_version_info(
+                    state,
+                    version,
+                    loader_version.as_ref(),
+                    Some(true),
+                    None,
+                    None,
+                )
+                .await
+                .context("reloading version info with logging config")?;
+            }
+        }
+        let quick_play_version =
+            QuickPlayVersion::find_version(version_index, &minecraft.versions);
+        let launch_version_id = version.id.clone();
+        let launch_version_type = version.type_.clone();
+        (
+            version_info,
+            minecraft_updated,
+            version_jar,
+            quick_play_version,
+            launch_version_id,
+            launch_version_type,
+        )
+    };
+
+    if external_link.is_some() {
+        let log_missing =
+            version_info
+                .logging
+                .as_ref()
+                .is_some_and(|logging| {
+                    match logging.get(&LoggingSide::Client) {
+                        Some(LoggingConfiguration::Log4j2Xml {
+                            file, ..
+                        }) => !state
+                            .directories
+                            .log_configs_dir()
+                            .join(&file.id)
+                            .is_file(),
+                        None => false,
+                    }
+                });
+        if log_missing {
+            version_info.logging = None;
+        }
+    } else {
+        let _ = download_log_config(state, &version_info, None, false, None)
+            .await
+            .context("downloading log config")?;
+    }
 
     let java_version = get_java_version_from_launch_context(
         context,
@@ -1005,10 +1169,23 @@ pub async fn launch_minecraft(
             .await
             .context(format!("checking Java at {}", java_version.path))?;
 
-    let client_path = state
-        .directories
-        .version_dir(&version_jar)
-        .join(format!("{version_jar}.jar"));
+    let has_local_client = local_client.is_some();
+    let client_path = if external_link.is_some() {
+        match local_client {
+            Some(path) => path,
+            None => bail!(ErrorKind::LauncherError(
+                "existing client jar was not found in the version folder"
+                    .to_string(),
+            )),
+        }
+    } else {
+        local_client.unwrap_or_else(|| {
+            state
+                .directories
+                .version_dir(&version_jar)
+                .join(format!("{version_jar}.jar"))
+        })
+    };
 
     let args = version_info.arguments.clone().unwrap_or_default();
     let mut command = match wrapper {
@@ -1038,12 +1215,15 @@ pub async fn launch_minecraft(
         )));
     }
 
-    if let Some(path) = download::missing_runtime_file(
-        state,
-        &version_info,
-        &java_version.architecture,
-        minecraft_updated,
-    )? {
+    if external_link.is_none()
+        && !has_local_client
+        && let Some(path) = download::missing_runtime_file(
+            state,
+            &version_info,
+            &java_version.architecture,
+            minecraft_updated,
+        )?
+    {
         tracing::info!(instance_id = %instance.id, path = %path.display(), "Restoring missing Minecraft runtime files before launch");
         drop(runtime_lease);
         let job = crate::install::install_existing_instance(
@@ -1065,13 +1245,15 @@ pub async fn launch_minecraft(
     }
     let _runtime_lease = runtime_lease;
 
-    let natives_dir = state.directories.version_natives_dir(&version_jar);
+    let natives_dir = if let Some(link) = &external_link {
+        hmcl_natives_dir(&link.minecraft_root, &link.version_id)
+    } else {
+        state.directories.version_natives_dir(&version_jar)
+    };
     if !natives_dir.exists() {
         io::create_dir_all(&natives_dir).await?;
     }
 
-    let quick_play_version =
-        QuickPlayVersion::find_version(version_index, &minecraft.versions);
     tracing::debug!(
         "Found QuickPlayVersion for {}: {quick_play_version:?}",
         content_set.game_version
@@ -1117,10 +1299,10 @@ pub async fn launch_minecraft(
             args.get(&d::minecraft::ArgumentType::Jvm)
                 .map(|x| x.as_slice()),
             &natives_dir,
-            &state.directories.libraries_dir(),
+            &libraries_dir,
             &state.directories.log_configs_dir(),
             &args::get_class_paths(
-                &state.directories.libraries_dir(),
+                &libraries_dir,
                 version_info.libraries.as_slice(),
                 &[&main_class_path, &client_path],
                 &java_version.architecture,
@@ -1153,6 +1335,13 @@ pub async fn launch_minecraft(
         command.arg("--add-opens=jdk.internal/jdk.internal.misc=ALL-UNNAMED");
     }
 
+    if let Some(agent) = crate::state::yggdrasil_launch_agent(
+        &credentials.refresh_token,
+        &state.directories.caches_dir().join("authlib-injector.jar"),
+    ) {
+        command.arg(agent);
+    }
+
     command
         .arg("com.modrinth.theseus.MinecraftLaunch")
         .arg(version_info.main_class.clone())
@@ -1162,11 +1351,11 @@ pub async fn launch_minecraft(
                     .map(|x| x.as_slice()),
                 version_info.minecraft_arguments.as_deref(),
                 credentials,
-                &version.id,
+                &launch_version_id,
                 &version_info.asset_index.id,
-                &instance_path,
-                &state.directories.assets_dir(),
-                &version.type_,
+                &game_directory,
+                &assets_dir,
+                &launch_version_type,
                 *resolution,
                 &java_version.architecture,
                 &quick_play_type,
@@ -1175,7 +1364,7 @@ pub async fn launch_minecraft(
             .await?
             .into_iter(),
         )
-        .current_dir(instance_path.clone());
+        .current_dir(game_directory.clone());
 
     // CARGO-set DYLD_LIBRARY_PATH breaks Minecraft on macOS during testing on playground
     #[cfg(target_os = "macos")]

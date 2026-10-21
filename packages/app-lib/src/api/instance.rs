@@ -47,8 +47,8 @@ pub(crate) use self::icon::{
     cache_icon, cache_icon_from_path, migrate_legacy_icons,
 };
 pub use self::install::get_optimal_jre_key;
-pub(crate) use self::lifecycle::create;
-pub use self::lifecycle::{edit, remove, set_synced_option};
+pub(crate) use self::lifecycle::{create, create_linked};
+pub use self::lifecycle::{edit, release, remove, set_synced_option};
 pub use self::paths::{get_full_path, get_mod_full_path};
 pub use self::projects::{
     InstallProjectWithDependenciesRequest, add_project_from_path,

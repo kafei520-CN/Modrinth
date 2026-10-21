@@ -1073,6 +1073,9 @@
   "conversation-thread.action.approve": {
     "message": "批准"
   },
+  "conversation-thread.action.approve-with-reply": {
+    "message": "批准并回复"
+  },
   "conversation-thread.action.close-report": {
     "message": "关闭举报"
   },
@@ -1081,6 +1084,9 @@
   },
   "conversation-thread.action.reject": {
     "message": "驳回"
+  },
+  "conversation-thread.action.reject-with-reply": {
+    "message": "拒绝并回复"
   },
   "conversation-thread.action.reopen-thread": {
     "message": "重开对话消息"
@@ -1115,6 +1121,9 @@
   "conversation-thread.action.withhold": {
     "message": "扣留"
   },
+  "conversation-thread.action.withhold-with-reply": {
+    "message": "搁置并回复"
+  },
   "conversation-thread.closed-thread.description": {
     "message": "此对话消息已关闭，无法发送新消息。"
   },
@@ -1123,6 +1132,12 @@
   },
   "conversation-thread.error.reopening-report": {
     "message": "重开举报出错"
+  },
+  "conversation-thread.error.sending-message": {
+    "message": "发送消息时出错"
+  },
+  "conversation-thread.image.open-externally": {
+    "message": "在外部打开"
   },
   "conversation-thread.reply-editor.placeholder.reply": {
     "message": "回复对话消息……"
@@ -1145,11 +1160,26 @@
   "conversation-thread.reply-modal.help-center-note": {
     "message": "如果你需要联系管理团队，请使用 <help-center-link>Modrinth Help Center</help-center-link>，然后点击右下角的蓝色气泡以联系支持。"
   },
+  "conversation-thread.reply.addresses": {
+    "message": "此回复针对以下需要说明的问题："
+  },
+  "conversation-thread.reply.changed-thread": {
+    "message": "所选会话已更改。请重新打开后再回复。"
+  },
+  "conversation-thread.reply.facet": {
+    "message": "{issue} 的说明"
+  },
+  "conversation-thread.reply.unknown-issue": {
+    "message": "审核问题"
+  },
   "conversation-thread.resubmit-modal.confirmation.description": {
     "message": "我已确认处理来自管理员的消息"
   },
   "conversation-thread.resubmit-modal.confirmation.label": {
     "message": "我确认我已妥善处理了管理员的评论。"
+  },
+  "conversation-thread.resubmit-modal.description.auto-approval": {
+    "message": "你正在重新提交 <project-title>{projectTitle}</project-title>。如果所有审核问题均已解决，系统可能会自动批准；否则将送交审核员复核。"
   },
   "conversation-thread.resubmit-modal.header.resubmitting": {
     "message": "重新提交审核"
@@ -1162,6 +1192,12 @@
   },
   "conversation-thread.resubmit-modal.warning": {
     "message": "如果反复提交而不处理管理员的评论，可能会导致账户被暂停。"
+  },
+  "conversation-thread.resubmit-required-actions-tooltip": {
+    "message": "你必须完成上方所有必做操作才能重新提交"
+  },
+  "conversation-thread.submit-modal.description": {
+    "message": "你正在提交 <project-title>{projectTitle}</project-title>，供审核员审核。"
   },
   "create-project-version.create-modal.stage.add-files.admonition": {
     "message": "补充文件仅用来保存源代码等支持性资料，不能用来存放替代版本或者变体文件。"
@@ -1444,6 +1480,21 @@
   },
   "create.project.visibility-unlisted": {
     "message": "未列出"
+  },
+  "create.restricted-alert.description": {
+    "message": "审核员已从你的账户中移除此权限。"
+  },
+  "create.restricted-alert.header": {
+    "message": "操作受限"
+  },
+  "create.restricted-alert.view-standing": {
+    "message": "查看账户状态"
+  },
+  "create.version.restricted-text": {
+    "message": "审核员已从你的账户中移除此权限。详情请查看账户设置中的「账户状态」。"
+  },
+  "create.version.restricted-title": {
+    "message": "操作受限"
   },
   "dashboard.affiliate-links.create.button": {
     "message": "创建推广链接"
@@ -2978,6 +3029,30 @@
   "layout.publish.email-verification-required.title": {
     "message": "需要验证电子邮件"
   },
+  "markdown-editor.placeholders.empty": {
+    "message": "没有匹配的占位符。"
+  },
+  "markdown-editor.placeholders.label": {
+    "message": "占位符"
+  },
+  "markdown-editor.placeholders.search": {
+    "message": "搜索占位符…"
+  },
+  "markdown-editor.templates.empty-all": {
+    "message": "没有匹配的消息或占位符。"
+  },
+  "markdown-editor.templates.insert": {
+    "message": "插入消息"
+  },
+  "markdown-editor.templates.library": {
+    "message": "消息库"
+  },
+  "markdown-editor.templates.search-all": {
+    "message": "搜索消息和占位符…"
+  },
+  "markdown-editor.templates.section": {
+    "message": "模板消息"
+  },
   "messages.noResults": {
     "message": "没有您的查询结果！"
   },
@@ -3005,8 +3080,77 @@
   "modal.shared-instance.open-in-app.why-use": {
     "message": "为什么选择 Modrinth APP"
   },
+  "moderation.c2pa-scan.failed": {
+    "message": "扫描 AI 生成文件失败。"
+  },
+  "moderation.c2pa-scan.no-ai-files": {
+    "message": "未发现 AI 生成的文件。"
+  },
   "moderation.exclude-technical-review": {
     "message": "排除技术评审"
+  },
+  "moderation.keybinds.change": {
+    "message": "{setting}：{binding}。激活以更改绑定。"
+  },
+  "moderation.keybinds.composer": {
+    "message": "会话回复与内部备注"
+  },
+  "moderation.keybinds.conflict-summary": {
+    "message": "{count, plural, one {# 个操作的快捷键存在重叠。} other {# 个操作的快捷键存在重叠。}} 这些快捷键在同时可用时可能会冲突。请更改绑定，或在录制时按 Escape 清除。"
+  },
+  "moderation.keybinds.conflicts": {
+    "message": "与以下重叠：{actions}"
+  },
+  "moderation.keybinds.decisions": {
+    "message": "审核结果与队列"
+  },
+  "moderation.keybinds.global": {
+    "message": "切换主机并复制 URL"
+  },
+  "moderation.keybinds.items": {
+    "message": "审核项目与检查项"
+  },
+  "moderation.keybinds.listen": {
+    "message": "请按下一个键…"
+  },
+  "moderation.keybinds.navigation": {
+    "message": "审核导航与面板"
+  },
+  "moderation.keybinds.no-results": {
+    "message": "没有匹配的快捷键。"
+  },
+  "moderation.keybinds.not-bound": {
+    "message": "未绑定"
+  },
+  "moderation.keybinds.project": {
+    "message": "从公开项目页面复制"
+  },
+  "moderation.keybinds.recording": {
+    "message": "{setting}：正在监听快捷键。按 Escape 可清除此绑定。"
+  },
+  "moderation.keybinds.reset-default": {
+    "message": "重置为默认"
+  },
+  "moderation.keybinds.scope-global": {
+    "message": "可在网站任意位置使用。"
+  },
+  "moderation.keybinds.scope-project-page": {
+    "message": "在启用项目页面快捷键时用于项目页面。"
+  },
+  "moderation.keybinds.scope-tech": {
+    "message": "用于技术审核页面。"
+  },
+  "moderation.keybinds.search": {
+    "message": "搜索快捷键…"
+  },
+  "moderation.keybinds.self-conflict": {
+    "message": "此操作的另一绑定"
+  },
+  "moderation.keybinds.technical": {
+    "message": "技术审核页面"
+  },
+  "moderation.keybinds.title": {
+    "message": "快捷键"
   },
   "moderation.moderate": {
     "message": "审核"
@@ -3028,6 +3172,951 @@
   },
   "moderation.page.technicalReview": {
     "message": "技术审查"
+  },
+  "moderation.project-review.actions": {
+    "message": "操作"
+  },
+  "moderation.project-review.approvedCount": {
+    "message": "{count} 个已批准"
+  },
+  "moderation.project-review.archived": {
+    "message": "已归档"
+  },
+  "moderation.project-review.archivedCount": {
+    "message": "{count} 个已归档"
+  },
+  "moderation.project-review.author": {
+    "message": "作者"
+  },
+  "moderation.project-review.back": {
+    "message": "返回"
+  },
+  "moderation.project-review.backToFiles": {
+    "message": "返回文件"
+  },
+  "moderation.project-review.changelog": {
+    "message": "更新日志"
+  },
+  "moderation.project-review.closePopoutWindows": {
+    "message": "关闭弹出窗口"
+  },
+  "moderation.project-review.closeReview": {
+    "message": "关闭审核控件"
+  },
+  "moderation.project-review.collapseAll": {
+    "message": "全部折叠"
+  },
+  "moderation.project-review.collapseVersion": {
+    "message": "隐藏详情"
+  },
+  "moderation.project-review.compatibility": {
+    "message": "兼容性"
+  },
+  "moderation.project-review.complete": {
+    "message": "完成"
+  },
+  "moderation.project-review.completedFiles": {
+    "message": "已审核文件（{count}）"
+  },
+  "moderation.project-review.completedProjects": {
+    "message": "已完成的项目"
+  },
+  "moderation.project-review.conversationThread": {
+    "message": "会话线程"
+  },
+  "moderation.project-review.copyHash": {
+    "message": "复制 {algorithm}"
+  },
+  "moderation.project-review.copyValue": {
+    "message": "复制：{value}"
+  },
+  "moderation.project-review.created": {
+    "message": "创建时间"
+  },
+  "moderation.project-review.customLicense": {
+    "message": "自定义"
+  },
+  "moderation.project-review.customSlug": {
+    "message": "与项目名称不同"
+  },
+  "moderation.project-review.dependencies": {
+    "message": "依赖"
+  },
+  "moderation.project-review.dependencyCount": {
+    "message": "{count, plural, one {# 个依赖} other {# 个依赖}}"
+  },
+  "moderation.project-review.description": {
+    "message": "描述"
+  },
+  "moderation.project-review.details": {
+    "message": "详情"
+  },
+  "moderation.project-review.details.privateDescription": {
+    "message": "不对外公开，仅项目成员可访问。"
+  },
+  "moderation.project-review.details.publicDescription": {
+    "message": "可通过 URL、个人资料和搜索看到。"
+  },
+  "moderation.project-review.details.unlistedDescription": {
+    "message": "仅可通过 URL 访问，不会显示在个人资料或搜索中。"
+  },
+  "moderation.project-review.disclosures": {
+    "message": "披露信息"
+  },
+  "moderation.project-review.discord": {
+    "message": "Discord 邀请"
+  },
+  "moderation.project-review.dockPanel": {
+    "message": "将面板移回工作区"
+  },
+  "moderation.project-review.donationBmac": {
+    "message": "Buy Me A Coffee"
+  },
+  "moderation.project-review.donationGithub": {
+    "message": "GitHub Sponsors"
+  },
+  "moderation.project-review.donationKoFi": {
+    "message": "Ko-fi"
+  },
+  "moderation.project-review.donationOther": {
+    "message": "其他"
+  },
+  "moderation.project-review.donationPatreon": {
+    "message": "Patreon"
+  },
+  "moderation.project-review.donationPaypal": {
+    "message": "PayPal"
+  },
+  "moderation.project-review.download": {
+    "message": "下载"
+  },
+  "moderation.project-review.downloads": {
+    "message": "下载量"
+  },
+  "moderation.project-review.draft": {
+    "message": "草稿"
+  },
+  "moderation.project-review.draftCount": {
+    "message": "{count} 个草稿"
+  },
+  "moderation.project-review.edit.remove-icon": {
+    "message": "移除图标"
+  },
+  "moderation.project-review.edit.upload-icon": {
+    "message": "上传图标"
+  },
+  "moderation.project-review.editSection": {
+    "message": "编辑{section}"
+  },
+  "moderation.project-review.embedded": {
+    "message": "内嵌"
+  },
+  "moderation.project-review.empty": {
+    "message": "未选择项目"
+  },
+  "moderation.project-review.emptyChangelog": {
+    "message": "没有更新日志"
+  },
+  "moderation.project-review.emptyDependencies": {
+    "message": "没有依赖"
+  },
+  "moderation.project-review.emptyDescription": {
+    "message": "没有描述"
+  },
+  "moderation.project-review.emptyEnvironments": {
+    "message": "没有环境"
+  },
+  "moderation.project-review.emptyGallery": {
+    "message": "没有画廊图片"
+  },
+  "moderation.project-review.emptyLinks": {
+    "message": "没有链接"
+  },
+  "moderation.project-review.emptyPlatforms": {
+    "message": "没有平台"
+  },
+  "moderation.project-review.emptyPopout": {
+    "message": "此面板中没有打开的标签页"
+  },
+  "moderation.project-review.emptyTags": {
+    "message": "没有标签"
+  },
+  "moderation.project-review.emptyVersions": {
+    "message": "没有版本"
+  },
+  "moderation.project-review.environments": {
+    "message": "环境"
+  },
+  "moderation.project-review.exit": {
+    "message": "退出"
+  },
+  "moderation.project-review.expandAll": {
+    "message": "全部展开"
+  },
+  "moderation.project-review.expandVersion": {
+    "message": "显示详情"
+  },
+  "moderation.project-review.featured": {
+    "message": "精选"
+  },
+  "moderation.project-review.fileCount": {
+    "message": "{count, plural, one {# 个文件} other {# 个文件}}"
+  },
+  "moderation.project-review.files": {
+    "message": "文件"
+  },
+  "moderation.project-review.finish": {
+    "message": "完成"
+  },
+  "moderation.project-review.gallery": {
+    "message": "画廊"
+  },
+  "moderation.project-review.gameVersions": {
+    "message": "游戏版本"
+  },
+  "moderation.project-review.generalSettings": {
+    "message": "常规"
+  },
+  "moderation.project-review.hashes": {
+    "message": "哈希"
+  },
+  "moderation.project-review.hideLeft": {
+    "message": "隐藏项目详情"
+  },
+  "moderation.project-review.hideRight": {
+    "message": "隐藏面板"
+  },
+  "moderation.project-review.icon": {
+    "message": "图标"
+  },
+  "moderation.project-review.imageNumber": {
+    "message": "图片 {number}"
+  },
+  "moderation.project-review.incompatible": {
+    "message": "不兼容"
+  },
+  "moderation.project-review.issues": {
+    "message": "问题跟踪"
+  },
+  "moderation.project-review.keepPopoutClosed": {
+    "message": "保持关闭"
+  },
+  "moderation.project-review.keybindsSettings": {
+    "message": "快捷键"
+  },
+  "moderation.project-review.left": {
+    "message": "项目详情"
+  },
+  "moderation.project-review.license": {
+    "message": "许可证"
+  },
+  "moderation.project-review.licenseUrl": {
+    "message": "许可证 URL"
+  },
+  "moderation.project-review.link-info.active": {
+    "message": "活跃"
+  },
+  "moderation.project-review.link-info.activity": {
+    "message": "活动"
+  },
+  "moderation.project-review.link-info.archived": {
+    "message": "此仓库已归档，其功能可能为只读。"
+  },
+  "moderation.project-review.link-info.archivedValue": {
+    "message": "已归档"
+  },
+  "moderation.project-review.link-info.author": {
+    "message": "作者"
+  },
+  "moderation.project-review.link-info.board": {
+    "message": "看板"
+  },
+  "moderation.project-review.link-info.bot": {
+    "message": "机器人"
+  },
+  "moderation.project-review.link-info.channel": {
+    "message": "频道"
+  },
+  "moderation.project-review.link-info.closedIssues": {
+    "message": "已关闭的议题"
+  },
+  "moderation.project-review.link-info.community": {
+    "message": "社区"
+  },
+  "moderation.project-review.link-info.company": {
+    "message": "公司"
+  },
+  "moderation.project-review.link-info.created": {
+    "message": "账户创建时间"
+  },
+  "moderation.project-review.link-info.detailTooltip": {
+    "message": "{label}：{value}"
+  },
+  "moderation.project-review.link-info.disabled": {
+    "message": "已禁用"
+  },
+  "moderation.project-review.link-info.discussions": {
+    "message": "讨论"
+  },
+  "moderation.project-review.link-info.discussionsDisabled": {
+    "message": "讨论功能已禁用。"
+  },
+  "moderation.project-review.link-info.dm": {
+    "message": "私信链接"
+  },
+  "moderation.project-review.link-info.document": {
+    "message": "文档"
+  },
+  "moderation.project-review.link-info.donation": {
+    "message": "捐赠资料"
+  },
+  "moderation.project-review.link-info.downloads": {
+    "message": "下载量"
+  },
+  "moderation.project-review.link-info.enabled": {
+    "message": "已启用"
+  },
+  "moderation.project-review.link-info.expires": {
+    "message": "过期时间"
+  },
+  "moderation.project-review.link-info.externalLinks": {
+    "message": "此页面上的外部链接"
+  },
+  "moderation.project-review.link-info.followers": {
+    "message": "关注者"
+  },
+  "moderation.project-review.link-info.forkOf": {
+    "message": "派生自"
+  },
+  "moderation.project-review.link-info.forks": {
+    "message": "派生"
+  },
+  "moderation.project-review.link-info.invite": {
+    "message": "服务器邀请"
+  },
+  "moderation.project-review.link-info.inviteExpired": {
+    "message": "此邀请已过期。"
+  },
+  "moderation.project-review.link-info.inviteExpires": {
+    "message": "此邀请设有过期时间。"
+  },
+  "moderation.project-review.link-info.inviter": {
+    "message": "邀请人"
+  },
+  "moderation.project-review.link-info.issues": {
+    "message": "议题"
+  },
+  "moderation.project-review.link-info.issuesDisabled": {
+    "message": "议题功能已禁用。"
+  },
+  "moderation.project-review.link-info.language": {
+    "message": "语言"
+  },
+  "moderation.project-review.link-info.lastPush": {
+    "message": "最近推送"
+  },
+  "moderation.project-review.link-info.license": {
+    "message": "许可证"
+  },
+  "moderation.project-review.link-info.loading": {
+    "message": "正在加载链接详情…"
+  },
+  "moderation.project-review.link-info.maxUses": {
+    "message": "使用次数上限"
+  },
+  "moderation.project-review.link-info.members": {
+    "message": "成员"
+  },
+  "moderation.project-review.link-info.noExpiry": {
+    "message": "永不过期"
+  },
+  "moderation.project-review.link-info.notFound": {
+    "message": "未找到该资源。它可能是私有、已删除或已过期。"
+  },
+  "moderation.project-review.link-info.online": {
+    "message": "在线"
+  },
+  "moderation.project-review.link-info.openIssues": {
+    "message": "未关闭的议题"
+  },
+  "moderation.project-review.link-info.organization": {
+    "message": "组织"
+  },
+  "moderation.project-review.link-info.owner": {
+    "message": "所有者"
+  },
+  "moderation.project-review.link-info.playlist": {
+    "message": "播放列表"
+  },
+  "moderation.project-review.link-info.privateCommunity": {
+    "message": "此社区为私有。"
+  },
+  "moderation.project-review.link-info.project": {
+    "message": "项目"
+  },
+  "moderation.project-review.link-info.projectStatus": {
+    "message": "项目状态：{status}"
+  },
+  "moderation.project-review.link-info.projectUnavailable": {
+    "message": "此项目未公开或已归档。请查看下方状态。"
+  },
+  "moderation.project-review.link-info.repositories": {
+    "message": "公开仓库"
+  },
+  "moderation.project-review.link-info.repository": {
+    "message": "仓库"
+  },
+  "moderation.project-review.link-info.role": {
+    "message": "角色"
+  },
+  "moderation.project-review.link-info.server": {
+    "message": "服务器"
+  },
+  "moderation.project-review.link-info.size": {
+    "message": "仓库大小"
+  },
+  "moderation.project-review.link-info.sponsors": {
+    "message": "赞助者"
+  },
+  "moderation.project-review.link-info.stars": {
+    "message": "星标"
+  },
+  "moderation.project-review.link-info.status": {
+    "message": "状态"
+  },
+  "moderation.project-review.link-info.stream": {
+    "message": "直播"
+  },
+  "moderation.project-review.link-info.subscribers": {
+    "message": "订阅者"
+  },
+  "moderation.project-review.link-info.target": {
+    "message": "邀请类型"
+  },
+  "moderation.project-review.link-info.topic": {
+    "message": "主题"
+  },
+  "moderation.project-review.link-info.unavailable": {
+    "message": "无法加载更多详情。服务可能不可用、为私有、受到速率限制，或被浏览器拦截。"
+  },
+  "moderation.project-review.link-info.unlimitedUses": {
+    "message": "不限次数"
+  },
+  "moderation.project-review.link-info.unsupported": {
+    "message": "此链接没有更多公开元数据。"
+  },
+  "moderation.project-review.link-info.user": {
+    "message": "用户"
+  },
+  "moderation.project-review.link-info.uses": {
+    "message": "使用次数"
+  },
+  "moderation.project-review.link-info.video": {
+    "message": "视频"
+  },
+  "moderation.project-review.link-info.website": {
+    "message": "网站"
+  },
+  "moderation.project-review.link-info.wiki": {
+    "message": "Wiki"
+  },
+  "moderation.project-review.link-info.wikiDisabled": {
+    "message": "Wiki 已禁用。"
+  },
+  "moderation.project-review.linkRemoved": {
+    "message": "已移除链接：{link}"
+  },
+  "moderation.project-review.linkUnavailable": {
+    "message": "链接不可用"
+  },
+  "moderation.project-review.links": {
+    "message": "链接"
+  },
+  "moderation.project-review.listed": {
+    "message": "已列出"
+  },
+  "moderation.project-review.loadError": {
+    "message": "无法加载项目数据"
+  },
+  "moderation.project-review.loading": {
+    "message": "加载中…"
+  },
+  "moderation.project-review.matchesName": {
+    "message": "与项目名称一致"
+  },
+  "moderation.project-review.memberCount": {
+    "message": "{count, plural, one {# 名成员} other {# 名成员}}"
+  },
+  "moderation.project-review.members": {
+    "message": "成员"
+  },
+  "moderation.project-review.modpack": {
+    "message": "整合包"
+  },
+  "moderation.project-review.modpackVersion": {
+    "message": "版本 {version}"
+  },
+  "moderation.project-review.monetization": {
+    "message": "获利"
+  },
+  "moderation.project-review.monetizationStatus": {
+    "message": "{status, select, monetized {已开启获利} demonetized {已关闭获利} forceDemonetized {强制关闭获利} other {未知}}"
+  },
+  "moderation.project-review.monetizationValue": {
+    "message": "{status, select, monetized {已启用} demonetized {已禁用} forceDemonetized {强制禁用} other {未知}}"
+  },
+  "moderation.project-review.mrpack": {
+    "message": ".mrpack"
+  },
+  "moderation.project-review.next": {
+    "message": "下一个"
+  },
+  "moderation.project-review.noCompletedProjects": {
+    "message": "还没有已完成的项目"
+  },
+  "moderation.project-review.noFlagsFiles": {
+    "message": "无标记的文件（{count}）"
+  },
+  "moderation.project-review.noIssues": {
+    "message": "没有问题。"
+  },
+  "moderation.project-review.noLicense": {
+    "message": "没有许可证 URL"
+  },
+  "moderation.project-review.noMatchingDependencies": {
+    "message": "没有匹配的依赖"
+  },
+  "moderation.project-review.noMatchingProjects": {
+    "message": "没有匹配的项目"
+  },
+  "moderation.project-review.noPendingFiles": {
+    "message": "没有未解决标记的文件"
+  },
+  "moderation.project-review.noQueuedProjects": {
+    "message": "队列中没有项目"
+  },
+  "moderation.project-review.noReports": {
+    "message": "此项目没有可用的技术审核报告"
+  },
+  "moderation.project-review.noReviewActions": {
+    "message": "此分区没有可用的审核操作"
+  },
+  "moderation.project-review.noSelectedIssues": {
+    "message": "尚未添加问题。审核项目时选择问题后，消息会显示在这里。"
+  },
+  "moderation.project-review.noServerAddress": {
+    "message": "没有地址。"
+  },
+  "moderation.project-review.noServerLanguages": {
+    "message": "没有语言。"
+  },
+  "moderation.project-review.noSkippedProjects": {
+    "message": "没有跳过的项目"
+  },
+  "moderation.project-review.openIcon": {
+    "message": "查看放大的项目图标"
+  },
+  "moderation.project-review.openImage": {
+    "message": "打开图片 {number}"
+  },
+  "moderation.project-review.openImageInNewTab": {
+    "message": "在新标签页中打开图片"
+  },
+  "moderation.project-review.openMemberAvatar": {
+    "message": "查看 {username} 的放大头像"
+  },
+  "moderation.project-review.openOrganizationIcon": {
+    "message": "查看 {organization} 的放大图标"
+  },
+  "moderation.project-review.openReviewGuidance": {
+    "message": "在新标签页中打开审核指南"
+  },
+  "moderation.project-review.openSlicer": {
+    "message": "在 Slicer 中打开"
+  },
+  "moderation.project-review.openVersionSlicer": {
+    "message": "在 Slicer 中打开文件"
+  },
+  "moderation.project-review.optional": {
+    "message": "可选"
+  },
+  "moderation.project-review.organization": {
+    "message": "组织"
+  },
+  "moderation.project-review.owner": {
+    "message": "所有者"
+  },
+  "moderation.project-review.panelLayout": {
+    "message": "面板布局"
+  },
+  "moderation.project-review.pendingFiles": {
+    "message": "待处理文件（{count}）"
+  },
+  "moderation.project-review.permalink": {
+    "message": "永久链接"
+  },
+  "moderation.project-review.permissions": {
+    "message": "权限"
+  },
+  "moderation.project-review.permissionsPlaceholder": {
+    "message": "权限审核即将推出"
+  },
+  "moderation.project-review.pinReview": {
+    "message": "固定审核控件"
+  },
+  "moderation.project-review.platforms": {
+    "message": "平台"
+  },
+  "moderation.project-review.popoutFailed": {
+    "message": "无法打开面板窗口"
+  },
+  "moderation.project-review.popoutPanel": {
+    "message": "在独立窗口中打开面板"
+  },
+  "moderation.project-review.post-approval": {
+    "message": "批准后"
+  },
+  "moderation.project-review.previousLink": {
+    "message": "上一个链接：{url}"
+  },
+  "moderation.project-review.primary": {
+    "message": "主文件"
+  },
+  "moderation.project-review.privateCount": {
+    "message": "{count} 个私有"
+  },
+  "moderation.project-review.processingCount": {
+    "message": "{count} 个审核中"
+  },
+  "moderation.project-review.project": {
+    "message": "项目"
+  },
+  "moderation.project-review.projectId": {
+    "message": "项目 ID"
+  },
+  "moderation.project-review.projectTitle": {
+    "message": "标题"
+  },
+  "moderation.project-review.projectType": {
+    "message": "类型"
+  },
+  "moderation.project-review.published": {
+    "message": "发布"
+  },
+  "moderation.project-review.publishedBy": {
+    "message": "发布者"
+  },
+  "moderation.project-review.queueError": {
+    "message": "无法切换项目，请重试"
+  },
+  "moderation.project-review.queueNavigation": {
+    "message": "审核队列导航"
+  },
+  "moderation.project-review.queuedProjects": {
+    "message": "接下来 5 个项目"
+  },
+  "moderation.project-review.re-review": {
+    "message": "复审"
+  },
+  "moderation.project-review.reReviewFindings": {
+    "message": "{count, plural, one {# 个复审项} other {# 个复审项}}"
+  },
+  "moderation.project-review.recommended": {
+    "message": "（推荐）"
+  },
+  "moderation.project-review.rejectedCount": {
+    "message": "{count} 个已拒绝"
+  },
+  "moderation.project-review.remaining": {
+    "message": "剩余"
+  },
+  "moderation.project-review.reopenPopouts": {
+    "message": "重新打开窗口"
+  },
+  "moderation.project-review.requesting": {
+    "message": "请求中"
+  },
+  "moderation.project-review.required": {
+    "message": "必填"
+  },
+  "moderation.project-review.reset": {
+    "message": "重置"
+  },
+  "moderation.project-review.resetPanelLayout": {
+    "message": "重置面板布局"
+  },
+  "moderation.project-review.resolvePermissions": {
+    "message": "审核再分发权限"
+  },
+  "moderation.project-review.restorePopouts": {
+    "message": "弹出窗口已关闭"
+  },
+  "moderation.project-review.restorePopoutsDescription": {
+    "message": "此窗口中的面板已移回主窗口：{panels}。"
+  },
+  "moderation.project-review.retry": {
+    "message": "重试"
+  },
+  "moderation.project-review.reupload": {
+    "message": "重新上传"
+  },
+  "moderation.project-review.reviewIssues": {
+    "message": "问题"
+  },
+  "moderation.project-review.reviewProgress": {
+    "message": "已审核标记表示进度，并不代表安全结论。无标记的文件没有标记结论"
+  },
+  "moderation.project-review.reviewScope": {
+    "message": "这些选择适用于整个项目的 {stage} 审核"
+  },
+  "moderation.project-review.reviewSection": {
+    "message": "审核{section}"
+  },
+  "moderation.project-review.right": {
+    "message": "右侧面板"
+  },
+  "moderation.project-review.saveProject": {
+    "message": "保存项目"
+  },
+  "moderation.project-review.scheduled": {
+    "message": "已排期"
+  },
+  "moderation.project-review.scheduledCount": {
+    "message": "{count} 个已排期"
+  },
+  "moderation.project-review.searchDependencies": {
+    "message": "搜索依赖…"
+  },
+  "moderation.project-review.searchingProjects": {
+    "message": "正在搜索项目…"
+  },
+  "moderation.project-review.selectedFindings": {
+    "message": "{count, plural, one {# 个已选项} other {# 个已选项}}"
+  },
+  "moderation.project-review.serverAddress": {
+    "message": "地址"
+  },
+  "moderation.project-review.serverAddressTemporaryHost": {
+    "message": "此地址使用临时服务器主机。"
+  },
+  "moderation.project-review.serverContent": {
+    "message": "内容"
+  },
+  "moderation.project-review.serverDetails": {
+    "message": "服务器详情"
+  },
+  "moderation.project-review.serverDiscord": {
+    "message": "Discord"
+  },
+  "moderation.project-review.serverLanguages": {
+    "message": "语言"
+  },
+  "moderation.project-review.serverRegion": {
+    "message": "地区"
+  },
+  "moderation.project-review.showLeft": {
+    "message": "显示项目详情"
+  },
+  "moderation.project-review.showRight": {
+    "message": "显示面板"
+  },
+  "moderation.project-review.skip": {
+    "message": "跳过"
+  },
+  "moderation.project-review.skipped": {
+    "message": "已跳过"
+  },
+  "moderation.project-review.skippedProjects": {
+    "message": "已跳过的项目"
+  },
+  "moderation.project-review.slicer": {
+    "message": "Slicer"
+  },
+  "moderation.project-review.slicerOpenExternal": {
+    "message": "在新标签页中打开 Slicer"
+  },
+  "moderation.project-review.slug": {
+    "message": "标识"
+  },
+  "moderation.project-review.slugNotSuggested": {
+    "message": "此标识与任何建议的标识都不匹配。"
+  },
+  "moderation.project-review.source": {
+    "message": "源代码"
+  },
+  "moderation.project-review.sourceAvailabilityRequired": {
+    "message": "许可证要求提供源代码。"
+  },
+  "moderation.project-review.sourceError": {
+    "message": "无法加载源代码。请尝试重新打开该标记"
+  },
+  "moderation.project-review.status-alerts": {
+    "message": "状态提醒"
+  },
+  "moderation.project-review.store": {
+    "message": "商店"
+  },
+  "moderation.project-review.submissions": {
+    "message": "{count, plural, one {# 次提交} other {# 次提交}}"
+  },
+  "moderation.project-review.submitted": {
+    "message": "已提交"
+  },
+  "moderation.project-review.summary": {
+    "message": "简介"
+  },
+  "moderation.project-review.tags": {
+    "message": "标签"
+  },
+  "moderation.project-review.tech-review": {
+    "message": "技术审核"
+  },
+  "moderation.project-review.techReviewFailedCount": {
+    "message": "{count} 个未通过技术审核"
+  },
+  "moderation.project-review.title": {
+    "message": "项目审核"
+  },
+  "moderation.project-review.unavailable": {
+    "message": "不可用"
+  },
+  "moderation.project-review.undefinedProject": {
+    "message": "未定义的项目"
+  },
+  "moderation.project-review.unknown": {
+    "message": "未知"
+  },
+  "moderation.project-review.unknownCount": {
+    "message": "{count} 个未知"
+  },
+  "moderation.project-review.unlisted": {
+    "message": "未列出"
+  },
+  "moderation.project-review.unlistedCount": {
+    "message": "{count} 个未列出"
+  },
+  "moderation.project-review.unpinReview": {
+    "message": "取消固定审核控件"
+  },
+  "moderation.project-review.updated": {
+    "message": "已更新"
+  },
+  "moderation.project-review.uploaded": {
+    "message": "上传于 {date}"
+  },
+  "moderation.project-review.validation.length": {
+    "message": "请输入 {min} 到 {max} 个字符。"
+  },
+  "moderation.project-review.validation.slug": {
+    "message": "只能使用字母、数字、句点、下划线和连字符。"
+  },
+  "moderation.project-review.vanilla": {
+    "message": "原版"
+  },
+  "moderation.project-review.versionId": {
+    "message": "版本 ID"
+  },
+  "moderation.project-review.versionNumber": {
+    "message": "版本号"
+  },
+  "moderation.project-review.versionSubtitle": {
+    "message": "版本副标题"
+  },
+  "moderation.project-review.versions": {
+    "message": "版本"
+  },
+  "moderation.project-review.viewC2paInfo": {
+    "message": "查看 C2PA 信息"
+  },
+  "moderation.project-review.viewVersion": {
+    "message": "查看版本"
+  },
+  "moderation.project-review.visibility": {
+    "message": "可见性"
+  },
+  "moderation.project-review.visibilityOption": {
+    "message": "{status, select, approved {公开} archived {公开} unlisted {未列出} private {私有} other {未知}}"
+  },
+  "moderation.project-review.website": {
+    "message": "网站"
+  },
+  "moderation.project-review.wiki": {
+    "message": "Wiki 页面"
+  },
+  "moderation.project-review.withheld": {
+    "message": "已搁置"
+  },
+  "moderation.project-review.withheldCount": {
+    "message": "{count} 个已搁置"
+  },
+  "moderation.settings.appearance": {
+    "message": "面板与外观"
+  },
+  "moderation.settings.based-on": {
+    "message": "基于"
+  },
+  "moderation.settings.default-value-styled": {
+    "message": "默认：<value></value>"
+  },
+  "moderation.settings.localhost": {
+    "message": "设为 {hostname}"
+  },
+  "moderation.settings.no-results": {
+    "message": "没有匹配的设置。"
+  },
+  "moderation.settings.none": {
+    "message": "无"
+  },
+  "moderation.settings.off": {
+    "message": "关"
+  },
+  "moderation.settings.on": {
+    "message": "开"
+  },
+  "moderation.settings.project-pages": {
+    "message": "公开项目页面与主机"
+  },
+  "moderation.settings.search": {
+    "message": "搜索设置…"
+  },
+  "moderation.settings.shortcuts": {
+    "message": "编辑器与快捷键提示"
+  },
+  "moderation.settings.title": {
+    "message": "常规设置"
+  },
+  "moderation.settings.unknown-commit": {
+    "message": "未知"
+  },
+  "moderation.settings.workflow": {
+    "message": "审核流程与队列"
+  },
+  "moderation.tech-review.file.download": {
+    "message": "下载"
+  },
+  "moderation.tech-review.file.download-file": {
+    "message": "下载 {filename}（{size}）"
+  },
+  "moderation.tech-review.file.flags": {
+    "message": "标记"
+  },
+  "moderation.tech-review.file.manual": {
+    "message": "人工审核"
+  },
+  "moderation.tech-review.file.no-flags": {
+    "message": "无标记"
+  },
+  "moderation.tech-review.file.open-slicer": {
+    "message": "在 Slicer 中打开"
+  },
+  "moderation.tech-review.file.open-slicer-tab": {
+    "message": "在 Slicer 标签页中打开"
+  },
+  "moderation.tech-review.file.slicer": {
+    "message": "Slicer"
+  },
+  "moderation.tech-review.file.view-version": {
+    "message": "查看版本"
   },
   "modpack-scan-modal.batch.label": {
     "message": "每批 {amount}"
@@ -3395,6 +4484,36 @@
   "organization.projects.none-with-create-prompt": {
     "message": "该组织还没有项目。想要<create-link>创建一个</create-link>吗？"
   },
+  "profile.button.analytics": {
+    "message": "查看用户分析"
+  },
+  "profile.button.edit-user": {
+    "message": "编辑用户"
+  },
+  "profile.button.info": {
+    "message": "查看用户详情"
+  },
+  "profile.button.shared-instances": {
+    "message": "查看共享实例"
+  },
+  "profile.details.label.auth-providers": {
+    "message": "认证提供方"
+  },
+  "profile.details.label.email-verified": {
+    "message": "邮箱已验证"
+  },
+  "profile.details.label.has-password": {
+    "message": "已设置密码"
+  },
+  "profile.details.label.has-totp": {
+    "message": "已启用 TOTP"
+  },
+  "profile.details.label.payment-methods": {
+    "message": "支付方式"
+  },
+  "profile.details.title": {
+    "message": "用户详情"
+  },
   "project-member-header.error-decline": {
     "message": "拒绝团队邀请时失败"
   },
@@ -3415,6 +4534,9 @@
   },
   "project-member-header.success-join": {
     "message": "你加入了项目团队"
+  },
+  "project-moderation-nags.project-submitted-for-review": {
+    "message": "你的项目已提交审核！"
   },
   "project-moderation-nags.publishing-checklist": {
     "message": "发布前检查单"
@@ -3448,6 +4570,225 @@
   },
   "project-moderation-nags.warning": {
     "message": "警告"
+  },
+  "project-review.composer.add-note": {
+    "message": "内部备注"
+  },
+  "project-review.composer.reply": {
+    "message": "回复"
+  },
+  "project-review.composer.reply-and-clear-issues": {
+    "message": "回复并清除问题"
+  },
+  "project-review.composer.reply-placeholder": {
+    "message": "回复会话…"
+  },
+  "project-review.controls.markdown-placeholder": {
+    "message": "说明需要如何修改…"
+  },
+  "project-review.controls.required-value": {
+    "message": "请填写此必填项。"
+  },
+  "project-review.controls.select": {
+    "message": "请选择一项"
+  },
+  "project-review.controls.slug-available": {
+    "message": "此项目 URL 可用。"
+  },
+  "project-review.controls.slug-error": {
+    "message": "无法检查 URL 是否可用，请重试。"
+  },
+  "project-review.controls.slug-invalid": {
+    "message": "请使用 3–64 个字母、数字、句点、下划线或连字符。"
+  },
+  "project-review.controls.slug-taken": {
+    "message": "此项目 URL 已被占用。"
+  },
+  "project-review.controls.slug-unchanged": {
+    "message": "请选择与当前项目 URL 不同的地址。"
+  },
+  "project-review.controls.text-placeholder": {
+    "message": "输入文本…"
+  },
+  "project-review.decision.add-issues": {
+    "message": "在项目上添加问题"
+  },
+  "project-review.decision.approve": {
+    "message": "批准"
+  },
+  "project-review.decision.message-mode": {
+    "message": "将问题作为会话消息发送"
+  },
+  "project-review.decision.reject": {
+    "message": "拒绝"
+  },
+  "project-review.decision.send-issues-message": {
+    "message": "发送问题会话消息"
+  },
+  "project-review.decision.send-to-review": {
+    "message": "送交审核"
+  },
+  "project-review.decision.set-to-draft": {
+    "message": "设为草稿"
+  },
+  "project-review.decision.withhold": {
+    "message": "搁置"
+  },
+  "project-review.image.dimensions": {
+    "message": "尺寸"
+  },
+  "project-review.image.disable-pixelated": {
+    "message": "关闭像素画渲染"
+  },
+  "project-review.image.download": {
+    "message": "下载图片"
+  },
+  "project-review.image.enable-pixelated": {
+    "message": "开启像素画渲染"
+  },
+  "project-review.image.file-size": {
+    "message": "文件大小"
+  },
+  "project-review.image.format": {
+    "message": "格式"
+  },
+  "project-review.image.info": {
+    "message": "图片信息"
+  },
+  "project-review.image.info-unknown": {
+    "message": "未知"
+  },
+  "project-review.issues.add": {
+    "message": "问题"
+  },
+  "project-review.issues.add-option": {
+    "message": "添加问题选项"
+  },
+  "project-review.issues.choose-option": {
+    "message": "请为此问题至少选择一个选项。"
+  },
+  "project-review.issues.custom": {
+    "message": "自定义问题"
+  },
+  "project-review.issues.custom-acknowledge-checkbox": {
+    "message": "确认复选框"
+  },
+  "project-review.issues.custom-acknowledge-reply": {
+    "message": "确认回复"
+  },
+  "project-review.issues.custom-actions": {
+    "message": "操作"
+  },
+  "project-review.issues.custom-add-facets": {
+    "message": "标记为已处理"
+  },
+  "project-review.issues.custom-message-required": {
+    "message": "请为此自定义问题输入消息。"
+  },
+  "project-review.issues.custom-placeholder": {
+    "message": "输入自定义问题消息…"
+  },
+  "project-review.issues.custom-priority": {
+    "message": "优先级"
+  },
+  "project-review.issues.custom-search-facets": {
+    "message": "搜索操作…"
+  },
+  "project-review.issues.custom-title": {
+    "message": "标题"
+  },
+  "project-review.issues.custom-title-placeholder": {
+    "message": "输入标题…"
+  },
+  "project-review.issues.edited": {
+    "message": "（已编辑）"
+  },
+  "project-review.issues.edited-tooltip": {
+    "message": "问题消息已编辑"
+  },
+  "project-review.issues.empty": {
+    "message": "未标记任何问题。"
+  },
+  "project-review.issues.empty-re-review": {
+    "message": "没有可复审的历史问题。"
+  },
+  "project-review.issues.field-option": {
+    "message": "{field}：{option}"
+  },
+  "project-review.issues.issue-message": {
+    "message": "消息"
+  },
+  "project-review.issues.message": {
+    "message": "{issue} 的消息"
+  },
+  "project-review.issues.no-results": {
+    "message": "没有匹配的问题。"
+  },
+  "project-review.issues.not-resolved": {
+    "message": "未解决"
+  },
+  "project-review.issues.open-panel": {
+    "message": "打开 {panel} 审核面板"
+  },
+  "project-review.issues.remove": {
+    "message": "移除 {issue}"
+  },
+  "project-review.issues.remove-option": {
+    "message": "移除 {option}"
+  },
+  "project-review.issues.reset": {
+    "message": "重置问题"
+  },
+  "project-review.issues.reset-all": {
+    "message": "重置所有问题"
+  },
+  "project-review.issues.reset-description": {
+    "message": "这将丢弃你对问题的更改，并把所有历史问题移回复审问题。"
+  },
+  "project-review.issues.reset-message": {
+    "message": "重置消息"
+  },
+  "project-review.issues.resolved": {
+    "message": "自动解决（{count}）"
+  },
+  "project-review.issues.revert-all-customizations": {
+    "message": "撤销全部自定义"
+  },
+  "project-review.issues.revert-customizations-description": {
+    "message": "撤销全部自定义会恢复默认问题消息，同时保留自定义问题消息以及所有问题开关和选择。"
+  },
+  "project-review.issues.search": {
+    "message": "搜索问题…"
+  },
+  "project-review.lock.moderating": {
+    "message": "{username} 正在审核"
+  },
+  "project-review.lock.take-over": {
+    "message": "接管项目"
+  },
+  "project-review.message-box.resize": {
+    "message": "调整消息框大小"
+  },
+  "project-review.previous-issues.re-review": {
+    "message": "复审"
+  },
+  "project-review.resize-checks": {
+    "message": "调整项目检查大小"
+  },
+  "project-review.right-panel.issues": {
+    "message": "问题（{count}）"
+  },
+  "project-review.right-panel.re-review": {
+    "message": "复审（{count}）"
+  },
+  "project-review.right-panel.thread": {
+    "message": "会话"
+  },
+  "project-review.versions.modpack-tools": {
+    "message": "整合包工具"
+  },
+  "project-review.versions.view-c2pa-info": {
+    "message": "查看 C2PA 信息"
   },
   "project-type.collection.plural": {
     "message": "收藏夹"
@@ -3527,6 +4868,9 @@
   "project.actions.edit-project": {
     "message": "编辑项目"
   },
+  "project.actions.open-in-modview": {
+    "message": "在 modview 中打开"
+  },
   "project.actions.project-page": {
     "message": "项目页"
   },
@@ -3568,6 +4912,30 @@
   },
   "project.description.title": {
     "message": "描述"
+  },
+  "project.disclosures.load-error": {
+    "message": "无法加载披露信息。"
+  },
+  "project.disclosures.loading": {
+    "message": "正在加载披露信息…"
+  },
+  "project.disclosures.lock-status.cannot-disable": {
+    "message": "无法禁用"
+  },
+  "project.disclosures.lock-status.fully-locked": {
+    "message": "完全锁定"
+  },
+  "project.disclosures.lock-status.label": {
+    "message": "锁定状态"
+  },
+  "project.disclosures.lock-status.unlocked": {
+    "message": "未锁定"
+  },
+  "project.disclosures.retry": {
+    "message": "重试"
+  },
+  "project.disclosures.save-error": {
+    "message": "无法保存全部披露信息更改。你的编辑已保留，请再试一次。"
   },
   "project.download.base-game-version-incompatible-tooltip": {
     "message": "此游戏版本与基础项目不兼容。"
@@ -3788,6 +5156,9 @@
   "project.moderation.error.unauthorized": {
     "message": "未经许可"
   },
+  "project.moderation.project-changed": {
+    "message": "所选项目已更改，请重新审核。"
+  },
   "project.moderation.thread.approved-warning": {
     "message": "这则聊天消息审核并不活跃，但如有需要，可能会审查其中关于你项目的信息。"
   },
@@ -3841,6 +5212,9 @@
   },
   "project.notification.updated.title": {
     "message": "项目已更新"
+  },
+  "project.review.approved": {
+    "message": "你的项目已获批准{status, select, unlisted {（未列出）} private {（私有）} other {}}。"
   },
   "project.settings.back-to-all-projects": {
     "message": "回到全部项目列表"
@@ -3961,6 +5335,9 @@
   },
   "project.settings.disclosures.derivative.note-placeholder": {
     "message": "这是一个叉，可以添加一些新的生物群落，并将其端口到更新的Minecraft版本。"
+  },
+  "project.settings.disclosures.derivative.open-link": {
+    "message": "访问链接"
   },
   "project.settings.disclosures.derivative.title": {
     "message": "包含衍生内容"
@@ -4130,14 +5507,23 @@
   "project.settings.license.custom-url-description": {
     "message": "完整许可证文本的网址。"
   },
+  "project.settings.license.has-spdx": {
+    "message": "使用 SPDX 标识符"
+  },
   "project.settings.license.intro": {
     "message": "为你的 {type} 选择合适的许可证非常重要。你可以从我们的列表中选择一项，也可以提供自定义许可证。你还可以为你选择的许可证提供一个自定义 URL；否则，将显示许可证文本。更多信息请参阅我们的 <guide>许可指南</guide> 。"
+  },
+  "project.settings.license.invalid-url": {
+    "message": "请输入有效的 HTTP 或 HTTPS 许可证 URL。"
   },
   "project.settings.license.later": {
     "message": "后续版本"
   },
   "project.settings.license.later-description": {
     "message": "你选择的许可证包含“或更多”条款。如果你勾选此复选框，用户可以在该许可证的后续版本下使用你的项目。"
+  },
+  "project.settings.license.missing-name": {
+    "message": "请为自定义许可证输入名称或 SPDX 标识符。"
   },
   "project.settings.license.missing-url": {
     "message": "输入指向你的自定义许可证全文的 URL。"
@@ -4154,11 +5540,20 @@
   "project.settings.license.optional-label": {
     "message": "可选"
   },
+  "project.settings.license.optional-url": {
+    "message": "许可证 URL（可选）"
+  },
   "project.settings.license.select": {
     "message": "许可证"
   },
+  "project.settings.license.select-description": {
+    "message": "用户可以以及不可以如何使用你的项目。"
+  },
   "project.settings.license.select-placeholder": {
     "message": "搜索许可证……"
+  },
+  "project.settings.license.spdx": {
+    "message": "SPDX 标识符"
   },
   "project.settings.license.title": {
     "message": "许可证"
@@ -4207,6 +5602,9 @@
   },
   "project.settings.links.donations-description": {
     "message": "添加捐赠链接，让用户可以直接支持你。"
+  },
+  "project.settings.links.invalid-url": {
+    "message": "保存前请输入有效的 HTTP 或 HTTPS URL。"
   },
   "project.settings.links.issues": {
     "message": "问题追踪器"
@@ -4286,6 +5684,9 @@
   "project.settings.permissions.attention-needed.title": {
     "message": "未知的外部内容"
   },
+  "project.settings.permissions.awaiting-review-count": {
+    "message": "{count, plural, =0 {没有待审核项} other {# 项待审核}}"
+  },
   "project.settings.permissions.bad-proof.description": {
     "message": "Modrinth的管理团队已拒绝了你为外部内容提供的权限信息，请查看被拒绝的外部内容，并提供有效的证明或删除内容。"
   },
@@ -4340,11 +5741,17 @@
   "project.settings.permissions.learn-more": {
     "message": "了解详情"
   },
+  "project.settings.permissions.no-permission-count": {
+    "message": "{count} 项无权限"
+  },
   "project.settings.permissions.no-results": {
     "message": "没有与您的搜索结果相关的外部信息。"
   },
   "project.settings.permissions.not-allowed.description": {
     "message": "由于这些外部内容违反了我们的内容规定，因此不能在 Modrinth 上发布，且必须被删除。"
+  },
+  "project.settings.permissions.open-image-in-new-tab": {
+    "message": "在新标签页中打开图片"
   },
   "project.settings.permissions.pending-approval-count": {
     "message": "{count, plural, =0 {无需审核的署名} one {# 条署名待审核} other {# 条署名待审核}}"
@@ -4363,6 +5770,9 @@
   },
   "project.settings.permissions.sort.status": {
     "message": "状态"
+  },
+  "project.settings.permissions.user-action-count": {
+    "message": "{count} 项需要用户操作"
   },
   "project.settings.server.bedrock-address-label": {
     "message": "基岩版地址"
@@ -4468,6 +5878,9 @@
   },
   "project.settings.tags.too-many-tags-server-soft-warning": {
     "message": "你选择了 {count} 个标签。建议将数量减少到 12 个或更少，以确保你的服务器主题更明确，且更容易发现。"
+  },
+  "project.settings.tags.upload-version-first.description": {
+    "message": "选择项目标签前请先上传一个版本。"
   },
   "project.settings.tags.upload-version-first.heading": {
     "message": "添加标签前上传版本"
@@ -5177,6 +6590,21 @@
   "settings.account.security.two-factor.title": {
     "message": "双因素验证"
   },
+  "settings.account.standing.good": {
+    "message": "你的账户状态良好。"
+  },
+  "settings.account.standing.reason-label": {
+    "message": "原因："
+  },
+  "settings.account.standing.restricted.description": {
+    "message": "审核员已从你的账户中移除以下权限："
+  },
+  "settings.account.standing.restricted.header": {
+    "message": "你的账户已被限制"
+  },
+  "settings.account.standing.title": {
+    "message": "账户状态"
+  },
   "settings.account.two-factor.backup.intro": {
     "message": "下载这些备用码，然后将其保存在安全的地方。如果你无法访问设备，就可以用备用码代替2次验证验证码！请你务必像保护密码一样保护备用码。"
   },
@@ -5647,6 +7075,195 @@
   },
   "shared-instance.invite.unavailable.title": {
     "message": "此邀请不可用"
+  },
+  "thread-issues.address-failed": {
+    "message": "标记问题为已处理失败"
+  },
+  "thread-issues.address-requirements-unchanged": {
+    "message": "请先按要求完成修改，再将此问题标记为已处理。"
+  },
+  "thread-issues.address-save-failed": {
+    "message": "无法保存你的更改。请先修复验证错误，再将此问题标记为已处理。"
+  },
+  "thread-issues.addressed": {
+    "message": "已标记为已处理"
+  },
+  "thread-issues.addressed-progress": {
+    "message": "已处理 {completed, number} / {total, number}"
+  },
+  "thread-issues.addressed-progress-tooltip": {
+    "message": "此问题已处理 {completed, number}/{total, number} 部分"
+  },
+  "thread-issues.change-facet-first": {
+    "message": "请先按要求完成修改，再将其标记为已处理。"
+  },
+  "thread-issues.facet.acknowledge-checkbox": {
+    "message": "确认此请求"
+  },
+  "thread-issues.facet.acknowledge-reply": {
+    "message": "在回复中说明你的更改"
+  },
+  "thread-issues.facet.version.changelog": {
+    "message": "修改版本更新日志"
+  },
+  "thread-issues.facet.version.dependencies": {
+    "message": "修改版本依赖"
+  },
+  "thread-issues.facet.version.environment": {
+    "message": "修改版本环境"
+  },
+  "thread-issues.facet.version.file-type": {
+    "message": "修改附加文件类型"
+  },
+  "thread-issues.facet.version.game-versions": {
+    "message": "修改支持的游戏版本"
+  },
+  "thread-issues.facet.version.remove": {
+    "message": "移除此版本"
+  },
+  "thread-issues.facet.version.remove-files": {
+    "message": "移除所要求的附加文件"
+  },
+  "thread-issues.hide-addressed": {
+    "message": "隐藏已处理"
+  },
+  "thread-issues.hide-issue": {
+    "message": "隐藏问题"
+  },
+  "thread-issues.hide-resolved": {
+    "message": "隐藏已解决"
+  },
+  "thread-issues.mark-addressed": {
+    "message": "标记为已处理"
+  },
+  "thread-issues.mark-addressed-progress": {
+    "message": "标记为已处理 {completed, number}/{total, number}"
+  },
+  "thread-issues.mark-resolved": {
+    "message": "标记为已解决"
+  },
+  "thread-issues.mark-unresolved": {
+    "message": "标记为未解决"
+  },
+  "thread-issues.more-actions": {
+    "message": "更多必做操作"
+  },
+  "thread-issues.options": {
+    "message": "问题选项"
+  },
+  "thread-issues.reply-to-address": {
+    "message": "回复以处理"
+  },
+  "thread-issues.resolve-failed": {
+    "message": "标记问题为已解决失败"
+  },
+  "thread-issues.resolved": {
+    "message": "已解决"
+  },
+  "thread-issues.show-addressed": {
+    "message": "显示已处理"
+  },
+  "thread-issues.show-issue": {
+    "message": "显示问题"
+  },
+  "thread-issues.show-resolved": {
+    "message": "显示已解决"
+  },
+  "thread-issues.target.edit-name": {
+    "message": "编辑名称"
+  },
+  "thread-issues.target.edit-summary": {
+    "message": "编辑简介"
+  },
+  "thread-issues.target.edit-url": {
+    "message": "编辑 URL"
+  },
+  "thread-issues.unresolve-failed": {
+    "message": "标记问题为未解决失败"
+  },
+  "thread.issue-history.flagged": {
+    "message": "标记了 {count, plural, one {# 个问题} other {# 个问题}}"
+  },
+  "thread.issue-history.private-note": {
+    "message": "仅审核员可见"
+  },
+  "thread.message.auto-approval": {
+    "message": "已解决所有问题，项目状态已自动设为 <status>已批准</status>。"
+  },
+  "thread.message.delete": {
+    "message": "删除"
+  },
+  "thread.message.deleted-message": {
+    "message": "发布了一条已被删除的消息。"
+  },
+  "thread.message.legacy-project-message": {
+    "message": "此项目在 Modrinth 尚无审核会话时发布，可能缺少审核历史。"
+  },
+  "thread.message.moderator": {
+    "message": "审核员"
+  },
+  "thread.message.modrinth-team": {
+    "message": "Modrinth 团队"
+  },
+  "thread.message.more-options": {
+    "message": "更多选项"
+  },
+  "thread.message.open-image": {
+    "message": "打开图片"
+  },
+  "thread.message.preview": {
+    "message": "预览"
+  },
+  "thread.message.private-message": {
+    "message": "仅审核员可见"
+  },
+  "thread.message.project-owner": {
+    "message": "项目所有者"
+  },
+  "thread.message.reporter": {
+    "message": "举报者"
+  },
+  "thread.message.reverted-to-draft": {
+    "message": "已将此项目恢复为 <status>.</status>"
+  },
+  "thread.message.review": {
+    "message": "审核了该项目，并将其状态设为 <status>status</status>。"
+  },
+  "thread.message.review-with-issues": {
+    "message": "审核了该项目，并将其状态设为 <status>status</status>，共 {count, plural, one {# 个问题} other {# 个问题}}。"
+  },
+  "thread.message.sent-image": {
+    "message": "发送了一张图片。"
+  },
+  "thread.message.sent-message": {
+    "message": "发送了一条消息。"
+  },
+  "thread.message.status-changed": {
+    "message": "将项目状态从 <old-status>status</old-status> 更改为 <status>.</status>"
+  },
+  "thread.message.submitted-for-review": {
+    "message": "已提交项目进行审核。"
+  },
+  "thread.message.system": {
+    "message": "Modrinth"
+  },
+  "thread.message.tech-review-completed": {
+    "message": "已完成技术审核，并将项目标记为 <status>.</status>"
+  },
+  "thread.message.tech-review-entered": {
+    "message": "项目已进入技术审核队列。"
+  },
+  "thread.message.tech-review-exit-file-deleted": {
+    "message": "由于用户删除了所有待审核文件，项目已离开技术审核队列。"
+  },
+  "thread.message.tech-review-exited": {
+    "message": "由于所有待处理痕迹均已解决，项目已离开技术审核队列。"
+  },
+  "thread.message.thread-closed": {
+    "message": "关闭了会话。"
+  },
+  "thread.message.thread-reopened": {
+    "message": "重新打开了会话。"
   },
   "ui.latest-news-row.latest-news": {
     "message": "Modrinth 的最新消息"

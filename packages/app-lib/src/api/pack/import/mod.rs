@@ -28,7 +28,10 @@ use crate::{
 pub mod atlauncher;
 pub mod curseforge;
 pub mod gdlauncher;
+pub mod hmcl;
 pub mod mmc;
+pub mod pcl;
+pub mod version_folder;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[cfg_attr(
@@ -41,6 +44,8 @@ pub enum ImportLauncherType {
     ATLauncher,
     GDLauncher,
     Curseforge,
+    PCL,
+    HMCL,
     #[serde(other)]
     Unknown,
 }
@@ -53,6 +58,8 @@ impl fmt::Display for ImportLauncherType {
             ImportLauncherType::ATLauncher => write!(f, "ATLauncher"),
             ImportLauncherType::GDLauncher => write!(f, "GDLauncher"),
             ImportLauncherType::Curseforge => write!(f, "Curseforge"),
+            ImportLauncherType::PCL => write!(f, "PCL"),
+            ImportLauncherType::HMCL => write!(f, "HMCL"),
             ImportLauncherType::Unknown => write!(f, "Unknown"),
         }
     }
@@ -79,6 +86,12 @@ pub async fn get_importable_instances(
         )
         .await
         .unwrap_or_else(|| "instances".to_string()),
+        ImportLauncherType::PCL => {
+            return pcl::list_instances(base_path).await;
+        }
+        ImportLauncherType::HMCL => {
+            return hmcl::list_instances(base_path).await;
+        }
         ImportLauncherType::Unknown => {
             let types = [
                 ImportLauncherType::MultiMC,
@@ -86,6 +99,8 @@ pub async fn get_importable_instances(
                 ImportLauncherType::ATLauncher,
                 ImportLauncherType::GDLauncher,
                 ImportLauncherType::Curseforge,
+                ImportLauncherType::PCL,
+                ImportLauncherType::HMCL,
             ];
             for lt in types {
                 if let Ok(instances) =
@@ -122,6 +137,75 @@ pub async fn get_importable_instances(
         }
     }
     Ok(instances)
+}
+
+pub async fn link_external_instance(
+    launcher_type: ImportLauncherType,
+    base_path: PathBuf,
+    instance_folder: String,
+) -> crate::Result<String> {
+    let resolved = match launcher_type {
+        ImportLauncherType::PCL | ImportLauncherType::HMCL => launcher_type,
+        ImportLauncherType::Unknown => {
+            if pcl::list_instances(base_path.clone())
+                .await
+                .is_ok_and(|items| items.contains(&instance_folder))
+            {
+                ImportLauncherType::PCL
+            } else if hmcl::list_instances(base_path.clone())
+                .await
+                .is_ok_and(|items| items.contains(&instance_folder))
+            {
+                ImportLauncherType::HMCL
+            } else {
+                bail!(ErrorKind::InputError(
+                    "path is not a PCL or HMCL instance".to_string(),
+                ));
+            }
+        }
+        _ => bail!(ErrorKind::InputError(
+            "path is not a PCL or HMCL instance".to_string(),
+        )),
+    };
+
+    match resolved {
+        ImportLauncherType::PCL => {
+            let root = pcl::resolve_minecraft_root(&base_path).await;
+            let version_dir = root.join("versions").join(&instance_folder);
+            let game_dir =
+                pcl::game_dir_for_version(&base_path, &root, &version_dir)
+                    .await;
+            version_folder::link_version_instance(
+                &root,
+                &instance_folder,
+                format!("PCL-{instance_folder}"),
+                version_folder::VersionImportOptions {
+                    display_name: Some(instance_folder.clone()),
+                    game_dir,
+                    ..version_folder::VersionImportOptions::default()
+                },
+            )
+            .await
+        }
+        ImportLauncherType::HMCL => {
+            let root = hmcl::resolve_minecraft_root(&base_path).await;
+            let version_dir = root.join("versions").join(&instance_folder);
+            let game_dir =
+                hmcl::game_dir_for_version(&version_dir, &root).await;
+            version_folder::link_version_instance(
+                &root,
+                &instance_folder,
+                format!("HMCL-{instance_folder}"),
+                version_folder::VersionImportOptions {
+                    display_name: Some(instance_folder.clone()),
+                    game_dir,
+                    ..version_folder::VersionImportOptions::default()
+                },
+            )
+            .await
+        }
+        _ => unreachable!(),
+    }
 }
 
 pub(crate) fn import_instance_with_reporter(
@@ -191,6 +275,26 @@ async fn import_instance_inner(
             )
             .await
         }
+        ImportLauncherType::PCL => {
+            pcl::import_pcl(
+                base_path,
+                instance_folder,
+                instance_id,
+                reporter.clone(),
+                details.clone(),
+            )
+            .await
+        }
+        ImportLauncherType::HMCL => {
+            hmcl::import_hmcl(
+                base_path,
+                instance_folder,
+                instance_id,
+                reporter.clone(),
+                details.clone(),
+            )
+            .await
+        }
         ImportLauncherType::Unknown => {
             let types = [
                 ImportLauncherType::MultiMC,
@@ -198,6 +302,8 @@ async fn import_instance_inner(
                 ImportLauncherType::ATLauncher,
                 ImportLauncherType::GDLauncher,
                 ImportLauncherType::Curseforge,
+                ImportLauncherType::PCL,
+                ImportLauncherType::HMCL,
             ];
             let mut matched = false;
             for lt in types {
@@ -267,6 +373,12 @@ pub fn get_default_launcher_path(
                 return Some(primary);
             }
             Some(dirs::document_dir()?.join("curseforge").join("minecraft"))
+        }
+        ImportLauncherType::PCL => {
+            return pcl::find_default_path();
+        }
+        ImportLauncherType::HMCL => {
+            return hmcl::find_default_path();
         }
         ImportLauncherType::Unknown => None,
     };
@@ -342,6 +454,9 @@ pub async fn is_valid_importable_instance(
         ImportLauncherType::Curseforge => {
             curseforge::is_valid_curseforge(instance_path).await
         }
+        ImportLauncherType::PCL | ImportLauncherType::HMCL => {
+            version_folder::is_valid_version_folder(instance_path).await
+        }
         ImportLauncherType::Unknown => false,
     }
 }
@@ -378,6 +493,7 @@ pub(crate) fn copy_dotminecraft_with_reporter<'a>(
         io_semaphore,
         reporter,
         details,
+        None,
     ))
 }
 
@@ -387,6 +503,7 @@ async fn copy_dotminecraft_with_reporter_inner(
     io_semaphore: &IoSemaphore,
     reporter: InstallProgressReporter,
     details: InstallPhaseDetails,
+    skip_relative: Option<fn(&str) -> bool>,
 ) -> crate::Result<()> {
     let state = crate::State::get().await?;
     let _lease = state.content_store.lease().await;
@@ -401,6 +518,9 @@ async fn copy_dotminecraft_with_reporter_inner(
             .map(|part| part.as_os_str().to_string_lossy())
             .collect::<Vec<_>>()
             .join("/");
+        if skip_relative.is_some_and(|skip| skip(&relative)) {
+            continue;
+        }
         if crate::state::content_store::is_managed_content_path(&relative) {
             let canonical = relative.trim_end_matches(".disabled").to_string();
             if !content_paths.insert(canonical.clone()) {
@@ -516,6 +636,9 @@ async fn copy_dotminecraft_with_reporter_inner(
             .map(|part| part.as_os_str().to_string_lossy())
             .collect::<Vec<_>>()
             .join("/");
+        if skip_relative.is_some_and(|skip| skip(&relative)) {
+            continue;
+        }
         if managed_paths.contains(&relative) {
             continue;
         }
@@ -605,12 +728,32 @@ pub(crate) async fn finish_import(
     reporter: InstallProgressReporter,
     details: InstallPhaseDetails,
 ) -> crate::Result<()> {
-    copy_dotminecraft_with_reporter(
+    finish_import_with_skip(
+        instance_id,
+        dotminecraft,
+        state,
+        reporter,
+        details,
+        None,
+    )
+    .await
+}
+
+pub(crate) async fn finish_import_with_skip(
+    instance_id: &str,
+    dotminecraft: PathBuf,
+    state: &State,
+    reporter: InstallProgressReporter,
+    details: InstallPhaseDetails,
+    skip_relative: Option<fn(&str) -> bool>,
+) -> crate::Result<()> {
+    copy_dotminecraft_with_reporter_inner(
         instance_id,
         dotminecraft,
         &state.io_semaphore,
         reporter.clone(),
         details,
+        skip_relative,
     )
     .await?;
 

@@ -48,11 +48,13 @@ const {
 	reorderGroups,
 	instanceOptions,
 	confirmDeleteModal,
+	confirmReleaseModal,
 	iconEditorModal,
 	currentIconEditorInstance,
 	currentDeleteInstances,
 	clearLibraryInstanceSelection,
 	deleteInstance,
+	releaseInstance,
 	handleInstanceIconSaved,
 	selectedLibraryInstances,
 	setSelectedLibraryInstances,
@@ -243,6 +245,10 @@ function setConfirmDeleteModal(component: unknown) {
 	confirmDeleteModal.value = component as InstanceType<typeof ConfirmDeleteInstanceModal> | null
 }
 
+function setConfirmReleaseModal(component: unknown) {
+	confirmReleaseModal.value = component as InstanceType<typeof ConfirmDeleteInstanceModal> | null
+}
+
 function setIconEditorModal(component: unknown) {
 	iconEditorModal.value = component as InstanceType<typeof IconEditorModal> | null
 }
@@ -390,6 +396,12 @@ watch(selectedLibraryInstances, (selectedInstances) => {
 		:ref="setConfirmDeleteModal"
 		:instances="currentDeleteInstances"
 		@delete="deleteInstance"
+	/>
+	<ConfirmDeleteInstanceModal
+		:ref="setConfirmReleaseModal"
+		:instances="currentDeleteInstances"
+		keep-files
+		@delete="releaseInstance"
 	/>
 	<IconEditorModal
 		:ref="setIconEditorModal"

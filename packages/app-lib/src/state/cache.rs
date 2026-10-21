@@ -448,6 +448,20 @@ fn file_hash_path_from_cache_key(key: &str) -> Option<&str> {
     (!path.is_empty()).then_some(path)
 }
 
+fn resolved_content_path(instances_dir: &Path, path: &str) -> PathBuf {
+    let (instance, relative) = path.split_once('/').unwrap_or((path, ""));
+    let stub = instances_dir.join(instance);
+    if let Some(run) = crate::state::dirs::external_run_directory(&stub) {
+        if relative.is_empty() {
+            run
+        } else {
+            run.join(relative)
+        }
+    } else {
+        instances_dir.join(path)
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct CachedLoaderManifest {
     pub loader: String,
@@ -1624,7 +1638,7 @@ impl CachedEntry {
                         )),
                     )?;
 
-                    let full_path = instances_dir.join(path);
+                    let full_path = resolved_content_path(instances_dir, path);
 
                     let mut file = tokio::fs::File::open(&full_path).await?;
                     let metadata = file.metadata().await?;

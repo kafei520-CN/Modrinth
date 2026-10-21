@@ -306,9 +306,15 @@ const hasPlus = computed(
 			hasActivePride26Midas(authenticatedModrinthUser.value?.campaigns?.pride_26)),
 )
 const showAd = computed(
-	() => sidebarVisible.value && !hasPlus.value && credentials.value !== undefined,
+	() =>
+		sidebarVisible.value &&
+		!hasPlus.value &&
+		credentials.value !== undefined &&
+		appSettings.showAds,
 )
-const adConsentAvailable = computed(() => credentials.value !== undefined && !hasPlus.value)
+const adConsentAvailable = computed(
+	() => credentials.value !== undefined && !hasPlus.value && appSettings.showAds,
+)
 providePageContext({
 	hierarchicalSidebarAvailable: ref(true),
 	showAds: showAd,
@@ -698,6 +704,8 @@ async function setupApp() {
 		friends_online_collapsed,
 		friends_offline_collapsed,
 		friends_pending_collapsed,
+		show_ads,
+		show_news,
 		developer_mode,
 		feature_flags,
 		pending_update_toast_for_version,
@@ -751,6 +759,8 @@ async function setupApp() {
 	appSettings.friendsOnlineCollapsed = friends_online_collapsed
 	appSettings.friendsOfflineCollapsed = friends_offline_collapsed
 	appSettings.friendsPendingCollapsed = friends_pending_collapsed
+	appSettings.showAds = show_ads
+	appSettings.showNews = show_news
 	appSettings.devMode = developer_mode
 	stateInitialized.value = true
 	debugStartup('App state initialized')

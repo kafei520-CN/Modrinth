@@ -91,6 +91,27 @@ pub async fn create_dir_all(
         })
 }
 
+pub fn is_directory_link(path: impl AsRef<Path>) -> bool {
+    let Ok(metadata) = std::fs::symlink_metadata(path.as_ref()) else {
+        return false;
+    };
+    metadata.file_type().is_symlink() || is_reparse_point(&metadata)
+}
+
+fn is_reparse_point(metadata: &std::fs::Metadata) -> bool {
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::MetadataExt;
+        const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x400;
+        metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = metadata;
+        false
+    }
+}
+
 pub async fn remove_dir_all(
     path: impl AsRef<std::path::Path>,
 ) -> Result<(), IOError> {

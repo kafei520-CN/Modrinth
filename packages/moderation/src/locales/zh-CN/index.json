@@ -422,6 +422,84 @@
   "nags.visit-links-settings.title": {
     "defaultMessage": "访问链接设置"
   },
+  "project-review.issue-location.disclosures": {
+    "defaultMessage": "编辑披露信息"
+  },
+  "project-review.issue-location.gallery": {
+    "defaultMessage": "编辑画廊图片"
+  },
+  "project-review.issue-location.permissions": {
+    "defaultMessage": "审核权限"
+  },
+  "project-review.issue-location.versions": {
+    "defaultMessage": "管理版本"
+  },
+  "project-review.issue-target.acknowledge": {
+    "defaultMessage": "确认"
+  },
+  "project-review.issue-target.add-gallery-images": {
+    "defaultMessage": "添加画廊图片"
+  },
+  "project-review.issue-target.add-project-disclosures": {
+    "defaultMessage": "添加披露信息"
+  },
+  "project-review.issue-target.mark-addressed": {
+    "defaultMessage": "标记为已处理"
+  },
+  "project-review.issue-target.modify-description": {
+    "defaultMessage": "修改描述"
+  },
+  "project-review.issue-target.modify-gallery-image": {
+    "defaultMessage": "修改画廊图片"
+  },
+  "project-review.issue-target.modify-icon": {
+    "defaultMessage": "修改图标"
+  },
+  "project-review.issue-target.modify-license": {
+    "defaultMessage": "修改许可证"
+  },
+  "project-review.issue-target.modify-links": {
+    "defaultMessage": "修改链接"
+  },
+  "project-review.issue-target.modify-project-disclosure": {
+    "defaultMessage": "修改披露信息"
+  },
+  "project-review.issue-target.modify-project-disclosure-note": {
+    "defaultMessage": "修改披露备注"
+  },
+  "project-review.issue-target.modify-server-address": {
+    "defaultMessage": "修改服务器地址"
+  },
+  "project-review.issue-target.modify-server-languages": {
+    "defaultMessage": "修改服务器语言"
+  },
+  "project-review.issue-target.modify-slug": {
+    "defaultMessage": "修改 URL 标识"
+  },
+  "project-review.issue-target.modify-summary": {
+    "defaultMessage": "修改简介"
+  },
+  "project-review.issue-target.modify-team-member-role": {
+    "defaultMessage": "修改团队成员角色"
+  },
+  "project-review.issue-target.modify-title": {
+    "defaultMessage": "修改标题"
+  },
+  "project-review.issue-target.remove-gallery-images": {
+    "defaultMessage": "移除画廊图片"
+  },
+  "project-review.issue-target.remove-icon": {
+    "defaultMessage": "移除图标"
+  },
+  "project-review.issue-target.remove-project-disclosures": {
+    "defaultMessage": "移除披露信息"
+  },
+  "project-review.issue-target.remove-tags": {
+    "defaultMessage": "移除标签"
+  },
+  "project-review.issue-target.version": {
+    "defaultMessage": "修改版本"
+  },
   "project.text-validation.description-matches-summary": {
     "defaultMessage": "您的项目描述应该提供独特的信息，且不要重复项目的摘要。"
   },
@@ -435,4 +513,3 @@
     "defaultMessage": "项目名称不应包含版本号。"
   }
 }
-

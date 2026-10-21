@@ -27,6 +27,7 @@ pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
     tauri::plugin::Builder::new("instance")
         .invoke_handler(tauri::generate_handler![
             instance_remove,
+            instance_release,
             instance_get,
             instance_get_many,
             instance_list,
@@ -515,6 +516,12 @@ fn edit_to_core(edit_instance: EditInstance) -> Result<CoreEditInstance> {
 #[tauri::command]
 pub async fn instance_remove(instance_id: &str) -> Result<()> {
     theseus::instance::remove(instance_id).await?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn instance_release(instance_id: &str) -> Result<()> {
+    theseus::instance::release(instance_id).await?;
     Ok(())
 }
 

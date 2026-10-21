@@ -1,7 +1,10 @@
 <template>
-	<NewModal ref="modal" :header="modalHeader" fade="danger" max-width="500px">
+	<NewModal ref="modal" :header="modalHeader" :fade="keepFiles ? 'warning' : 'danger'" max-width="500px">
 		<div class="flex flex-col gap-6">
-			<Admonition type="critical" :header="formatMessage(messages.admonitionHeader)">
+			<Admonition
+				:type="keepFiles ? 'warning' : 'critical'"
+				:header="formatMessage(keepFiles ? messages.releaseAdmonitionHeader : messages.admonitionHeader)"
+			>
 				{{ admonitionBody }}
 			</Admonition>
 
@@ -74,7 +77,11 @@
 					<XIcon />
 					{{ formatMessage(commonMessages.cancelButton) }}
 				</Button>
-				<Button type="colored" color="red" @click="confirm">
+				<Button v-if="keepFiles" @click="confirm">
+					<UnlinkIcon />
+					{{ deleteButtonLabel }}
+				</Button>
+				<Button v-else type="colored" color="red" @click="confirm">
 					<TrashIcon />
 					{{ deleteButtonLabel }}
 				</Button>
@@ -84,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { TrashIcon, XIcon } from '@modrinth/assets'
+import { TrashIcon, UnlinkIcon, XIcon } from '@modrinth/assets'
 import {
 	Admonition,
 	Avatar,
@@ -134,15 +141,37 @@ const messages = defineMessages({
 		id: 'app.instance.confirm-delete.delete-button',
 		defaultMessage: 'Delete instance',
 	},
+	releaseHeader: {
+		id: 'app.instance.confirm-release.header',
+		defaultMessage: 'Release instance',
+	},
+	releaseAdmonitionHeader: {
+		id: 'app.instance.confirm-release.admonition-header',
+		defaultMessage: 'Game files are kept',
+	},
+	releaseAdmonitionBody: {
+		id: 'app.instance.confirm-release.admonition-body',
+		defaultMessage:
+			'This only removes the instance from the library. Worlds, mods, and configs stay in the original folder.',
+	},
+	releaseButton: {
+		id: 'app.instance.confirm-release.button',
+		defaultMessage: 'Release instance',
+	},
 	bulkDeleteButton: {
 		id: 'app.instance.confirm-delete.bulk-delete-button',
 		defaultMessage: 'Delete {count} instances',
 	},
 })
 
-const props = withDefaults(defineProps<{ instances?: GameInstance[] }>(), {
-	instances: () => [],
-})
+const props = withDefaults(
+	defineProps<{ instances?: GameInstance[]; keepFiles?: boolean }>(),
+	{
+		instances: () => [],
+		keepFiles: false,
+	},
+)
+const keepFiles = computed(() => props.keepFiles)
 const instances = computed(() => props.instances)
 const count = computed(() => instances.value.length || 1)
 
@@ -154,21 +183,24 @@ const modal = ref<InstanceType<typeof NewModal>>()
 const instanceListRef = ref<HTMLElement | null>(null)
 const { showTopFade, showBottomFade, checkScrollState, forceCheck } =
 	useScrollIndicator(instanceListRef)
-const modalHeader = computed(() =>
-	count.value === 1
+const modalHeader = computed(() => {
+	if (keepFiles.value) return formatMessage(messages.releaseHeader)
+	return count.value === 1
 		? formatMessage(messages.header)
-		: formatMessage(messages.bulkHeader, { count: count.value }),
-)
-const admonitionBody = computed(() =>
-	count.value === 1
+		: formatMessage(messages.bulkHeader, { count: count.value })
+})
+const admonitionBody = computed(() => {
+	if (keepFiles.value) return formatMessage(messages.releaseAdmonitionBody)
+	return count.value === 1
 		? formatMessage(messages.admonitionBody)
-		: formatMessage(messages.bulkAdmonitionBody, { count: count.value }),
-)
-const deleteButtonLabel = computed(() =>
-	count.value === 1
+		: formatMessage(messages.bulkAdmonitionBody, { count: count.value })
+})
+const deleteButtonLabel = computed(() => {
+	if (keepFiles.value) return formatMessage(messages.releaseButton)
+	return count.value === 1
 		? formatMessage(messages.deleteButton)
-		: formatMessage(messages.bulkDeleteButton, { count: count.value }),
-)
+		: formatMessage(messages.bulkDeleteButton, { count: count.value })
+})
 
 function show() {
 	modal.value?.show()

@@ -4,7 +4,7 @@
 		class="flex flex-col gap-3 bg-button-bg border border-solid border-surface-5 rounded-xl p-3 mt-2"
 	>
 		<span>{{ formatMessage(messages.notSignedIn) }}</span>
-		<Button type="colored" color="brand" :disabled="loginDisabled" @click="login()">
+		<Button type="colored" color="brand" :disabled="loginDisabled" @click="openAddAccount()">
 			<LogInIcon v-if="!loginDisabled" />
 			<SpinnerIcon v-else class="animate-spin" />
 			{{ formatMessage(messages.signInToMinecraft) }}
@@ -75,7 +75,7 @@
 					v-if="accounts.length > 0"
 					class="w-full !bg-button-bg !text-primary ![box-shadow:var(--shadow-button)]"
 					:disabled="loginDisabled"
-					@click="login()"
+					@click="openAddAccount()"
 				>
 					<PlusIcon />
 					{{ formatMessage(messages.addAccount) }}
@@ -83,6 +83,93 @@
 			</div>
 		</div>
 	</Accordion>
+
+	<NewModal ref="addAccountModal" :header="formatMessage(stepHeader)">
+		<div v-if="accountStep === 'choose'" class="flex flex-col gap-3">
+			<p class="m-0 text-sm text-secondary">{{ formatMessage(messages.addAccountHint) }}</p>
+			<div class="grid grid-cols-1 gap-2">
+				<button
+					v-for="method in methods"
+					:key="method.id"
+					type="button"
+					class="flex items-start gap-3 rounded-xl border border-solid p-3 text-left cursor-pointer bg-transparent"
+					:class="
+						selectedMethod === method.id
+							? 'border-brand bg-brand-highlight'
+							: 'border-surface-5 hover:bg-button-hover'
+					"
+					@click="selectedMethod = method.id"
+				>
+					<div
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-button-bg text-brand"
+					>
+						<component :is="method.icon" class="h-5 w-5" />
+					</div>
+					<div class="min-w-0">
+						<div class="font-semibold text-contrast">{{ formatMessage(method.title) }}</div>
+						<div class="mt-0.5 text-xs text-secondary">{{ formatMessage(method.description) }}</div>
+					</div>
+				</button>
+			</div>
+		</div>
+
+		<div v-else class="flex flex-col gap-3">
+			<p class="m-0 text-sm text-secondary">
+				{{ formatMessage(selectedMethodMessage.description) }}
+			</p>
+			<div v-if="selectedMethod === 'offline'" class="flex flex-col gap-2">
+				<label class="text-sm font-medium text-contrast" for="offline-name">
+					{{ formatMessage(messages.playerName) }}
+				</label>
+				<Input
+					id="offline-name"
+					v-model="offlineName"
+					maxlength="16"
+					:placeholder="formatMessage(messages.playerNamePlaceholder)"
+					@keydown.enter="submitOffline"
+				/>
+			</div>
+			<div v-else-if="selectedMethod === 'authlib'" class="flex flex-col gap-2">
+				<label class="text-sm font-medium text-contrast" for="auth-server">
+					{{ formatMessage(messages.authServer) }}
+				</label>
+				<Input
+					id="auth-server"
+					v-model="authServer"
+					placeholder="https://littleskin.cn/api/yggdrasil"
+				/>
+				<label class="text-sm font-medium text-contrast" for="auth-username">
+					{{ formatMessage(messages.username) }}
+				</label>
+				<Input id="auth-username" v-model="authUsername" autocomplete="username" />
+				<label class="text-sm font-medium text-contrast" for="auth-password">
+					{{ formatMessage(messages.password) }}
+				</label>
+				<Input
+					id="auth-password"
+					v-model="authPassword"
+					type="password"
+					autocomplete="current-password"
+					@keydown.enter="submitAuthlib"
+				/>
+			</div>
+		</div>
+
+		<div class="mt-4 flex justify-end gap-2">
+			<Button @click="accountStep === 'choose' ? addAccountModal?.hide() : backToMethods()">
+				{{ formatMessage(accountStep === 'choose' ? messages.cancel : messages.back) }}
+			</Button>
+			<Button
+				type="colored"
+				color="brand"
+				:disabled="loginDisabled || !selectedMethod"
+				@click="accountStep === 'choose' ? goToLogin() : submitSelected()"
+			>
+				<SpinnerIcon v-if="loginDisabled" class="animate-spin" />
+				{{ formatMessage(accountStep === 'choose' ? messages.next : messages.continue) }}
+			</Button>
+		</div>
+	</NewModal>
 </template>
 
 <script setup lang="ts">
@@ -93,6 +180,9 @@ import {
 	RadioButtonIcon,
 	SpinnerIcon,
 	TrashIcon,
+	MicrosoftColorIcon,
+	UserIcon,
+	WorldIcon,
 } from '@modrinth/assets'
 import {
 	Accordion,
@@ -101,6 +191,8 @@ import {
 	defineMessages,
 	IconButton,
 	injectNotificationManager,
+	Input,
+	NewModal,
 	useVIntl,
 } from '@modrinth/ui'
 import type { Ref } from 'vue'
@@ -112,6 +204,8 @@ import { trackEvent } from '@/helpers/analytics'
 import {
 	get_default_user,
 	login as login_flow,
+	login_offline,
+	login_yggdrasil,
 	remove_user,
 	set_default_user,
 	users,
@@ -136,6 +230,13 @@ type MinecraftCredential = {
 
 const accounts: Ref<MinecraftCredential[]> = ref([])
 const loginDisabled = ref(false)
+const addAccountModal = ref<InstanceType<typeof NewModal> | null>(null)
+const accountStep = ref<'choose' | 'login'>('choose')
+const selectedMethod = ref<'offline' | 'microsoft' | 'authlib' | null>(null)
+const offlineName = ref('')
+const authServer = ref('')
+const authUsername = ref('')
+const authPassword = ref('')
 const defaultUser = ref<string | undefined>()
 const equippedSkin = ref<Skin | null>(null)
 const equippedHeadUrl = ref<string>()
@@ -235,15 +336,76 @@ async function setAccount(account: MinecraftCredential) {
 	emit('change')
 }
 
+function openAddAccount() {
+	accountStep.value = 'choose'
+	selectedMethod.value = null
+	addAccountModal.value?.show()
+}
+
+function goToLogin() {
+	if (!selectedMethod.value) return
+	accountStep.value = 'login'
+}
+
+function backToMethods() {
+	accountStep.value = 'choose'
+}
+
 async function login() {
+	openAddAccount()
+}
+
+async function submitSelected() {
+	if (selectedMethod.value === 'microsoft') {
+		addAccountModal.value?.hide()
+		await loginMicrosoft()
+		return
+	}
+	if (selectedMethod.value === 'offline') {
+		await submitOffline()
+		return
+	}
+	await submitAuthlib()
+}
+
+async function loginMicrosoft() {
 	loginDisabled.value = true
 	const loggedIn = await login_flow().catch(handleSevereError)
-
 	if (loggedIn) {
 		await setAccount(loggedIn)
 	}
-
 	trackEvent('AccountLogIn')
+	loginDisabled.value = false
+}
+
+async function submitOffline() {
+	const name = offlineName.value.trim()
+	if (!name) return
+	loginDisabled.value = true
+	const loggedIn = await login_offline(name).catch(handleSevereError)
+	if (loggedIn) {
+		offlineName.value = ''
+		addAccountModal.value?.hide()
+		await setAccount(loggedIn)
+		trackEvent('AccountLogIn')
+	}
+	loginDisabled.value = false
+}
+
+async function submitAuthlib() {
+	if (!authServer.value.trim() || !authUsername.value.trim() || !authPassword.value) return
+	loginDisabled.value = true
+	const loggedIn = await login_yggdrasil(
+		authServer.value.trim(),
+		authUsername.value.trim(),
+		authPassword.value,
+	).catch(handleSevereError)
+	if (loggedIn) {
+		authPassword.value = ''
+		addAccountModal.value?.hide()
+		await setAccount(loggedIn)
+		trackEvent('AccountLogIn')
+	}
 	loginDisabled.value = false
 }
 
@@ -289,5 +451,104 @@ const messages = defineMessages({
 		id: 'minecraft-account.sign-in',
 		defaultMessage: 'Sign in to Minecraft',
 	},
+	addAccountTitle: {
+		id: 'minecraft-account.add-account.title',
+		defaultMessage: 'Add account',
+	},
+	addAccountHint: {
+		id: 'minecraft-account.add-account.hint',
+		defaultMessage: 'Choose how you want to sign in.',
+	},
+	offlineTitle: {
+		id: 'minecraft-account.method.offline.title',
+		defaultMessage: 'Offline',
+	},
+	offlineDescription: {
+		id: 'minecraft-account.method.offline.description',
+		defaultMessage: 'Play with a username. No Microsoft account required.',
+	},
+	microsoftTitle: {
+		id: 'minecraft-account.method.microsoft.title',
+		defaultMessage: 'Microsoft',
+	},
+	microsoftDescription: {
+		id: 'minecraft-account.method.microsoft.description',
+		defaultMessage: 'Sign in with a Microsoft account that owns Minecraft.',
+	},
+	authlibTitle: {
+		id: 'minecraft-account.method.authlib.title',
+		defaultMessage: 'Third-party auth',
+	},
+	authlibDescription: {
+		id: 'minecraft-account.method.authlib.description',
+		defaultMessage: 'Sign in to a Yggdrasil server such as LittleSkin.',
+	},
+	playerName: {
+		id: 'minecraft-account.player-name',
+		defaultMessage: 'Player name',
+	},
+	playerNamePlaceholder: {
+		id: 'minecraft-account.player-name.placeholder',
+		defaultMessage: 'Steve',
+	},
+	authServer: {
+		id: 'minecraft-account.auth-server',
+		defaultMessage: 'Auth server',
+	},
+	username: {
+		id: 'minecraft-account.username',
+		defaultMessage: 'Username',
+	},
+	password: {
+		id: 'minecraft-account.password',
+		defaultMessage: 'Password',
+	},
+	cancel: {
+		id: 'minecraft-account.cancel',
+		defaultMessage: 'Cancel',
+	},
+	continue: {
+		id: 'minecraft-account.continue',
+		defaultMessage: 'Continue',
+	},
+	next: {
+		id: 'minecraft-account.next',
+		defaultMessage: 'Next',
+	},
+	back: {
+		id: 'minecraft-account.back',
+		defaultMessage: 'Back',
+	},
 })
+
+const stepHeader = computed(() =>
+	accountStep.value === 'choose'
+		? messages.addAccountTitle
+		: (methods.find((method) => method.id === selectedMethod.value)?.title ??
+			messages.addAccountTitle),
+)
+const selectedMethodMessage = computed(
+	() => methods.find((method) => method.id === selectedMethod.value) ?? methods[0],
+)
+
+const methods = [
+	{
+		id: 'offline' as const,
+		icon: UserIcon,
+		title: messages.offlineTitle,
+		description: messages.offlineDescription,
+	},
+	{
+		id: 'microsoft' as const,
+		icon: MicrosoftColorIcon,
+		title: messages.microsoftTitle,
+		description: messages.microsoftDescription,
+	},
+	{
+		id: 'authlib' as const,
+		icon: WorldIcon,
+		title: messages.authlibTitle,
+		description: messages.authlibDescription,
+	},
+]
 </script>

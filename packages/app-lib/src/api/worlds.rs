@@ -356,7 +356,7 @@ pub async fn get_singleplayer_world(
     let state = State::get().await?;
     let (instance_id, instance_path) =
         resolve_instance_identity(instance, &state).await?;
-    let instance_dir = state.directories.instances_dir().join(instance_path);
+    let instance_dir = state.directories.resolve_instance_dir(&instance_path);
     let mut world =
         read_singleplayer_world(get_world_dir(&instance_dir, world)).await?;
 

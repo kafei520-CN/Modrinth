@@ -121,6 +121,7 @@ ts-rs = { workspace = true, features = [
   "no-serde-warnings",
   "uuid-impl",
 ], optional = true }
+md5 = { workspace = true }
 url = { workspace = true, features = ["serde"] }
 urlencoding = { workspace = true }
 uuid = { workspace = true, features = ["serde", "v4"] }
