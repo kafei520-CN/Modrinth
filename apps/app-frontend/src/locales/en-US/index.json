@@ -1007,6 +1007,18 @@
   "app.java-selector.test-installation": {
     "message": "Test Java installation"
   },
+  "app.locale-suggestion.body": {
+    "message": "Your system language does not match the app language. Switch to {language}?"
+  },
+  "app.locale-suggestion.ignore": {
+    "message": "Ignore, don’t show again"
+  },
+  "app.locale-suggestion.switch": {
+    "message": "Switch to ''{language}''"
+  },
+  "app.locale-suggestion.title": {
+    "message": "Switch language"
+  },
   "app.library.actions.label": {
     "message": "Library actions"
   },

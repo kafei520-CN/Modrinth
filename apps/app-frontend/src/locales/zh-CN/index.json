@@ -1007,6 +1007,18 @@
   "app.java-selector.test-installation": {
     "message": "测试"
   },
+  "app.locale-suggestion.body": {
+    "message": "系统语言与软件语言不一致，建议切换至{language}。"
+  },
+  "app.locale-suggestion.ignore": {
+    "message": "忽略，不再显示"
+  },
+  "app.locale-suggestion.switch": {
+    "message": "切换至''{language}''"
+  },
+  "app.locale-suggestion.title": {
+    "message": "切换语言"
+  },
   "app.library.actions.label": {
     "message": "实例库操作"
   },

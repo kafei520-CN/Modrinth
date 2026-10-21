@@ -4,6 +4,7 @@ import {
 	type CrowdinMessages,
 	LOCALES,
 } from '@modrinth/ui'
+import IntlMessageFormat from 'intl-messageformat'
 import englishUi from '@modrinth/ui/src/locales/en-US/index.json'
 import { createI18n } from 'vue-i18n'
 
@@ -40,6 +41,38 @@ async function fetchMessages(url: string): Promise<CrowdinMessages> {
 	const response = await fetch(url)
 	if (!response.ok) throw new Error(`Could not load translations: ${response.status}`)
 	return response.json()
+}
+
+export async function translateForLocale(
+	locale: string,
+	id: string,
+	fallback: string,
+	values?: Record<string, string>,
+): Promise<string> {
+	let template = fallback
+	if (locale !== 'en-US') {
+		const url = (localeUrls as Record<string, string | undefined>)[
+			`./locales/${locale}/index.json`
+		]
+		if (url) {
+			try {
+				const messages = await fetchMessages(url)
+				const entry = messages[id]
+				if (typeof entry === 'string') {
+					template = entry
+				} else if (entry && typeof entry === 'object') {
+					template = entry.message ?? entry.defaultMessage ?? fallback
+				}
+			} catch {
+				template = fallback
+			}
+		}
+	}
+	try {
+		return new IntlMessageFormat(template, locale).format(values ?? {}) as string
+	} catch {
+		return template
+	}
 }
 
 export async function setLocale(requestedLocale: string): Promise<void> {

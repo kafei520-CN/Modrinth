@@ -151,6 +151,7 @@ import {
 	setRestartAfterPendingUpdate,
 } from '@/helpers/utils.js'
 import { start_join_server, start_join_singleplayer_world } from '@/helpers/worlds.ts'
+import { maybeSuggestSystemLocale } from '@/helpers/locale-suggestion'
 import i18n, { setLocale } from '@/i18n.config'
 import {
 	instanceKeys,
@@ -259,6 +260,8 @@ const hostingIntercom = useHostingIntercom({
 			: INTERCOM_BUBBLE_DEFAULT_PADDING,
 	),
 })
+
+let suggestSystemLocale = () => {}
 
 const notificationManager = new AppNotificationManager()
 provideNotificationManager(notificationManager)
@@ -715,6 +718,7 @@ async function setupApp() {
 	if (locale) {
 		await traceStartupStep('Apply startup locale', () => setLocale(locale))
 	}
+	suggestSystemLocale()
 
 	Object.assign(appSettings.featureFlags, feature_flags)
 	isMaximized.value = await traceStartupStep('Read window maximized state', () =>
@@ -994,6 +998,27 @@ const authProvider = setupAuthProvider(credentials, async (_redirectPath, flow, 
 })
 
 const userPreferences = setupAppUserPreferencesProvider(authProvider, notificationManager)
+suggestSystemLocale = () => {
+	void maybeSuggestSystemLocale({
+		appLocale: i18n.global.locale.value,
+		notify: addPopupNotification,
+		applyLocale: async (nextLocale) => {
+			try {
+				await userPreferences.updatePreferences({ localization: { locale: nextLocale } })
+			} catch {
+				// Account sync reports its own failure. The local language still changes.
+			}
+			await setLocale(nextLocale)
+			const settings = await getSettings()
+			if (settings.locale !== nextLocale) {
+				settings.locale = nextLocale
+				await setSettings(settings)
+			}
+		},
+	}).catch((error) => {
+		console.error(error)
+	})
+}
 let userPreferencesSync = Promise.resolve()
 
 watch(

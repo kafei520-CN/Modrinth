@@ -12,6 +12,7 @@
 				v-for="item in notifications"
 				:key="item.id"
 				class="popup-notification-wrapper"
+				:class="{ 'is-bottom-right': isBottomRight(item) }"
 				@mouseenter="stopTimer(item)"
 				@mouseleave="setNotificationTimer(item)"
 			>
@@ -227,6 +228,10 @@ function notificationButtonColor(
 	return color === 'standard' ? undefined : color
 }
 
+function isBottomRight(item: PopupNotification): boolean {
+	return item.contentType === 'standard' && item.placement === 'bottom-right'
+}
+
 function isDownloadNotification(
 	item: PopupNotification,
 ): item is PopupNotificationStandard & { type: 'download' } {
@@ -389,6 +394,14 @@ withDefaults(
 
 .popup-notification-group .popup-notification-wrapper {
 	width: 100%;
+}
+
+.popup-notification-group .popup-notification-wrapper.is-bottom-right {
+	position: fixed;
+	right: 1.5rem;
+	bottom: 1.5rem;
+	width: min(440px, calc(100vw - 3rem));
+	z-index: 200;
 }
 
 .popup-notifs-enter-active,

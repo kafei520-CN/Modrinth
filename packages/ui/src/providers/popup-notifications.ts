@@ -56,6 +56,7 @@ export interface PopupNotificationStandard extends PopupNotificationBase {
 	contentType: 'standard'
 	title: string
 	type: 'error' | 'warning' | 'success' | 'info' | 'download'
+	placement?: 'top-right' | 'bottom-right'
 	titleLogo?: Component
 	text?: string
 	iconUrl?: string | null
